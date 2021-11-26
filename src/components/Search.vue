@@ -1,15 +1,17 @@
 <template>
   <div class="search">
-    <form class="search-bar">
+    <form>
       <label for="exampleDataList">搜尋路線</label>
-      <input
-        class="form-control"
-        id="exampleDataList"
-        placeholder="輸入公車路線 / 起迄方向名或關鍵字..."
-        v-model="searchBus"
-      />
-      <div class="clearbtn" @click="handleClear">
-        <img src="../assets/delete.png" alt="" />
+      <div class="search-bar">
+        <input
+          class="form-control"
+          id="exampleDataList"
+          placeholder="輸入公車路線 / 起迄方向名或關鍵字..."
+          v-model="searchBus"
+        />
+        <div class="clearbtn" @click="handleClear">
+          <img src="../assets/delete.png" alt="" />
+        </div>
       </div>
     </form>
 
@@ -49,19 +51,19 @@ export default {
 
 <style scoped>
 .search {
-  width: 464px;
-  height: 750px;
+  width: 25vw;
+  height: 87%;
   background: #ffffff;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
+  z-index: 999;
 }
 .search-bar {
-  border: none;
+  width: 20vw;
 }
 .clearbtn {
-  width: 50px;
-  position: relative;
-  top: -33px;
-  left: 320px;
+  position: absolute;
+  top: 59px;
+  right: 60px;
   cursor: pointer;
 }
 
