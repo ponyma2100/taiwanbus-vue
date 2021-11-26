@@ -1,0 +1,88 @@
+/* custom font */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&family=Nunito:wght@200;300;400;600;700;800&display=swap');
+
+/* variables */
+:root {
+  --primary:#fafafa;
+  --secondary: #A8A8A8;
+  --warning: #da0f41;
+  --fontprimary: #283C43;;
+  --btnhover:#022020;
+  --btnshadow: 0px 5px 15px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* scrollbar width */
+::-webkit-scrollbar {
+  width: 1px;
+  height: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* base styles  */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', 'Noto Sans TC',sans-serif;
+  /* color: var(--fontprimary); */
+  letter-spacing: 0.03em
+}
+body {
+  background: #fafafa;
+}
+a {
+  text-decoration: none;
+  color: var(--fontprimary)
+}
+
+/* buttons */
+button, .btn { 
+  background: var(--primary);
+  border-radius: 10px;
+  border: 0;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--fontprimary);
+  box-shadow: var(--btnshadow);
+
+}
+button:hover, .btn:hover {
+  filter: brightness(90%);
+}
+button:disabled {
+  opacity: 0.5;
+  color: var(--primary);
+  background: var(--secondary);
+  cursor: not-allowed;
+}
+
+/* forms */
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 1px 2px 3px rgba(50,50,50,0.05);
+  border: 1px solid  var(--secondary);
+  background: white;
+}
+input, textarea {
+  border: 0;
+  padding: 10px;
+  outline: none;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+ul {
+  list-style: none;
+}
+
+/* error text */
+.error {
+  color: var(--warning);
+  font-size: 14px;
+  margin: 16px 0;
+}
