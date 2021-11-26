@@ -11,7 +11,8 @@ const routes = [
   {
     path: '/citybus/:city',
     name: 'CityBus',
-    component: CityBus
+    component: CityBus,
+    props: true
   },
 ]
 

@@ -25,10 +25,9 @@ const getCityBus = () => {
 
   const loadBus = async (city = 'Taipei') => {
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$top=10&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$select=RouteName&$format=JSON`, { headers })
       const data = await res.json()
       busData.value = data
-      console.log("🚀 ~ file: getCityBus.js ~ line 25 ~ getCityBus ~ data", busData.value)
 
     } catch (error) {
       console.log(error)

@@ -16,15 +16,11 @@
 </template>
 
 <script>
-import getCityBus from "../composables/getCityBus";
 import CityMenu from "../components/CityMenu";
 export default {
   name: "Home",
   components: { CityMenu },
-  setup() {
-    const { loadBus } = getCityBus();
-    loadBus();
-  },
+  setup() {},
 };
 </script>
 
