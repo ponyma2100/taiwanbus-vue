@@ -16,7 +16,6 @@ import cityName from "../data/cityName";
 
 export default {
   setup() {
-    console.log(cityName);
     return { cityName };
   },
 };

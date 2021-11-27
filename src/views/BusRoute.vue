@@ -10,14 +10,23 @@
 import L from "leaflet";
 import { useRoute } from "vue-router";
 import { onMounted, ref } from "@vue/runtime-core";
+import getCityBus from "../composables/getCityBus";
 // import BusStop from "../components/BusStop.vue";
 
 export default {
-  components: { Search },
+  components: {},
   setup(props) {
     const { loadBusStop, busStopData } = getCityBus();
     const route = useRoute();
-
+    console.log(
+      "🚀 ~ file: BusRoute.vue ~ line 18 ~ setup ~ props",
+      route.params
+    );
+    loadBusStop(
+      route.params.city,
+      route.params.routeName,
+      route.params.routeUID
+    );
     onMounted(() => {
       let mymap;
       mymap = L.map("map").setView([25.03, 121.56], 13);
@@ -37,7 +46,7 @@ export default {
       ).addTo(mymap);
     });
 
-    return { busData, getBusStop };
+    return { busStopData };
   },
 };
 </script>

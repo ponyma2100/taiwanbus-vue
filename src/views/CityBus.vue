@@ -47,10 +47,18 @@ export default {
       ).addTo(mymap);
     });
 
-    const getBusStop = (routeName) => {
-      loadBusStop(route.params.city, routeName);
-      // toggleSearchResult.value = !toggleSearchResult.value;
-    };
+    // const getBusStop = (matchingBus) => {
+    //   console.log(
+    //     "🚀 ~ file: CityBus.vue ~ line 55 ~ getBusStop ~ matchingBus[0].RouteID",
+    //     matchingBus
+    //   );
+
+    //   loadBusStop(
+    //     route.params.city,
+    //     matchingBus[0].RouteName.Zh_tw,
+    //     matchingBus[0].RouteID
+    //   );
+    // };
 
     return { busData, getBusStop };
   },

@@ -20,10 +20,13 @@
         class="list-group-item list-group-item-action"
         v-for="bus in matchingBus"
         :key="bus"
-        @click="handleClickSearch(bus.RouteName.Zh_tw)"
+        @click="handleClickSearch(matchingBus)"
       >
         <router-link
-          :to="{ name: 'BusRoute', params: { routename: bus.RouteName.Zh_tw } }"
+          :to="{
+            name: 'BusRoute',
+            params: { routeName: bus.RouteName.Zh_tw, routeUID: bus.RouteUID },
+          }"
         >
           <p>{{ bus.RouteName.Zh_tw }}</p>
         </router-link>
@@ -49,9 +52,10 @@ export default {
       searchBus.value = "";
     };
 
-    const handleClickSearch = (routeName) => {
-      console.log(routeName);
-      emit("getRouteName", routeName);
+    const handleClickSearch = (matchingBus) => {
+      console.log("matchingBus", matchingBus);
+
+      emit("getRouteName", matchingBus);
     };
 
     return { searchBus, matchingBus, handleClear, handleClickSearch };

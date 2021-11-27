@@ -16,7 +16,7 @@ const routes = [
     props: true
   },
   {
-    path: '/citybus/:city/:routename',
+    path: '/citybus/:city/:routeName&:routeUID',
     name: 'BusRoute',
     component: BusRoute,
     props: true
