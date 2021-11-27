@@ -60,7 +60,7 @@ export default {
     //   );
     // };
 
-    return { busData, getBusStop };
+    return { busData };
   },
 };
 </script>

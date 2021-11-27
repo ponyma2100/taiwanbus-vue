@@ -3,7 +3,7 @@
     <p>首頁/</p>
   </header>
   <div id="map"></div>
-  <!-- <BusStop  /> -->
+  <BusStop :busStopData="busStopData" />
 </template>
 
 <script>
@@ -11,17 +11,14 @@ import L from "leaflet";
 import { useRoute } from "vue-router";
 import { onMounted, ref } from "@vue/runtime-core";
 import getCityBus from "../composables/getCityBus";
-// import BusStop from "../components/BusStop.vue";
+import BusStop from "../components/BusStop.vue";
 
 export default {
-  components: {},
+  components: { BusStop },
   setup(props) {
     const { loadBusStop, busStopData } = getCityBus();
     const route = useRoute();
-    console.log(
-      "🚀 ~ file: BusRoute.vue ~ line 18 ~ setup ~ props",
-      route.params
-    );
+
     loadBusStop(
       route.params.city,
       route.params.routeName,
