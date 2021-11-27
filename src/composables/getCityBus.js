@@ -21,11 +21,12 @@ function getAuthorizationHeader() {
 const getCityBus = () => {
   const headers = getAuthorizationHeader()
   const busData = ref([])
+  const busStopData = ref([])
 
 
   const loadBus = async (city = 'Taipei') => {
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$select=RouteName&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$select=RouteName,DepartureStopNameZh,destinationStopNameZh&$format=JSON`, { headers })
       const data = await res.json()
       busData.value = data
 
@@ -35,8 +36,20 @@ const getCityBus = () => {
 
   }
 
+  const loadBusStop = async (city, RouteName) => {
+    try {
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/${city}/${RouteName}?&$format=JSON`, { headers })
+      const data = await res.json()
+      busStopData.value = data
 
-  return { loadBus, busData }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+  return { loadBus, busData, loadBusStop, busStopData }
 }
 
 

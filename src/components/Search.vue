@@ -20,8 +20,13 @@
         class="list-group-item list-group-item-action"
         v-for="bus in matchingBus"
         :key="bus"
+        @click="handleClickSearch(bus.RouteName.Zh_tw)"
       >
-        <p>{{ bus.RouteName.Zh_tw }}</p>
+        <router-link
+          :to="{ name: 'BusRoute', params: { routename: bus.RouteName.Zh_tw } }"
+        >
+          <p>{{ bus.RouteName.Zh_tw }}</p>
+        </router-link>
       </li>
     </ul>
   </div>
@@ -31,7 +36,7 @@
 import { computed, ref } from "@vue/reactivity";
 export default {
   props: ["busData"],
-  setup(props) {
+  setup(props, { emit }) {
     const searchBus = ref("");
 
     const matchingBus = computed(() => {
@@ -44,7 +49,12 @@ export default {
       searchBus.value = "";
     };
 
-    return { searchBus, matchingBus, handleClear };
+    const handleClickSearch = (routeName) => {
+      console.log(routeName);
+      emit("getRouteName", routeName);
+    };
+
+    return { searchBus, matchingBus, handleClear, handleClickSearch };
   },
 };
 </script>
@@ -52,6 +62,7 @@ export default {
 <style scoped>
 .search {
   width: 25vw;
+  min-width: 300px;
   height: 87%;
   background: #ffffff;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
@@ -59,6 +70,7 @@ export default {
 }
 .search-bar {
   width: 20vw;
+  min-width: 200px;
 }
 .clearbtn {
   position: absolute;
@@ -72,7 +84,7 @@ export default {
 }
 .list-group {
   overflow-y: scroll;
-  height: 600px;
+  max-height: 60vh;
 }
 .list-group .list-group-item {
   font-weight: bold;

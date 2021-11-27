@@ -3,30 +3,20 @@
     <p>首頁/</p>
   </header>
   <div id="map"></div>
-  <Search
-    v-show="!toggleSearchResult"
-    :busData="busData"
-    @getRouteName="getBusStop"
-  />
-  <!-- <BusStop v-show="toggleSearchResult" /> -->
+  <!-- <BusStop  /> -->
 </template>
 
 <script>
 import L from "leaflet";
-import getCityBus from "../composables/getCityBus";
 import { useRoute } from "vue-router";
 import { onMounted, ref } from "@vue/runtime-core";
-import Search from "../components/Search.vue";
 // import BusStop from "../components/BusStop.vue";
 
 export default {
   components: { Search },
   setup(props) {
-    const { loadBus, busData, loadBusStop, busStopData } = getCityBus();
+    const { loadBusStop, busStopData } = getCityBus();
     const route = useRoute();
-    const toggleSearchResult = ref(false);
-
-    loadBus();
 
     onMounted(() => {
       let mymap;
@@ -47,11 +37,6 @@ export default {
       ).addTo(mymap);
     });
 
-    const getBusStop = (routeName) => {
-      loadBusStop(route.params.city, routeName);
-      // toggleSearchResult.value = !toggleSearchResult.value;
-    };
-
     return { busData, getBusStop };
   },
 };
@@ -63,7 +48,6 @@ export default {
   z-index: 10;
 }
 
-.search,
 .busstop {
   position: absolute;
   top: 120px;
