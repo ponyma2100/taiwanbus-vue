@@ -27,7 +27,9 @@
         <div class="stop-info">
           <div class="stop-estimatetime">
             <p v-show="stop.StopStatus !== 0">{{ stop.StopStatus }}</p>
-            <p v-if="stop.StopStatus === 0">{{ (stop.EstimateTime = "60") }}</p>
+            <p v-if="stop.StopStatus === 0">
+              {{ Math.floor(stop.EstimateTime / 60) }}
+            </p>
           </div>
           <div class="stop-name">
             <p>{{ stop.StopName.Zh_tw }}</p>
