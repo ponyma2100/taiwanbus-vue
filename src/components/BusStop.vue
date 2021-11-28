@@ -1,5 +1,8 @@
 <template>
   <div class="busstop">
+    <div class="goback">
+      <button @click="handleClick">&lt;返回搜尋</button>
+    </div>
     <div class="businfo">
       <div class="bus-name">
         <p>{{ $route.params.routeName }}</p>
@@ -7,6 +10,7 @@
       <ul class="nav nav-pills">
         <li class="nav-item" @click="handleShowBus">
           <router-link class="nav-link active" to="#">去程{{}}</router-link>
+          <!-- busStopData[0].Stops[0].StopName.Zh_tw -->
         </li>
         <li class="nav-item" @click="handleShowBus">
           <router-link class="nav-link" to="#">返程{{}}</router-link>
@@ -17,26 +21,36 @@
     <ul class="list-group" v-show="toggleShowBus">
       <li
         class="list-group-item list-group-item-action"
-        v-for="bus in goBus"
-        :key="bus.RouteID"
+        v-for="stop in goBusData.Stops"
+        :key="stop.StopUID"
       >
-        <div class="direction-go" v-if="bus.Direction === 0">
-          <li v-for="stop in bus.Stops" :key="stop.StopID">
+        <div class="stop-info">
+          <div class="stop-estimatetime">
+            <p v-show="stop.StopStatus !== 0">{{ stop.StopStatus }}</p>
+            <p v-if="stop.StopStatus === 0">{{ (stop.EstimateTime = "60") }}</p>
+          </div>
+          <div class="stop-name">
             <p>{{ stop.StopName.Zh_tw }}</p>
-          </li>
+          </div>
         </div>
       </li>
     </ul>
     <ul class="list-group" v-show="!toggleShowBus">
       <li
         class="list-group-item list-group-item-action"
-        v-for="bus in backBus"
-        :key="bus.RouteID"
+        v-for="stop in backBusData.Stops"
+        :key="stop.StopUID"
       >
-        <div class="direction-back" v-if="bus.Direction === 1">
-          <li v-for="stop in bus.Stops" :key="stop.StopID">
+        <div class="stop-info">
+          <div class="stop-estimatetime">
+            <p v-show="stop.StopStatus !== 0">{{ (stop.StopStatus = 0) }}</p>
+            <p v-if="stop.StopStatus === 0">
+              {{ Math.floor(stop.EstimateTime / 60) }}分
+            </p>
+          </div>
+          <div class="stop-name">
             <p>{{ stop.StopName.Zh_tw }}</p>
-          </li>
+          </div>
         </div>
       </li>
     </ul>
@@ -45,28 +59,29 @@
 
 <script>
 import { computed, ref } from "@vue/reactivity";
+import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+
 export default {
-  props: ["busStopData"],
+  props: ["busStopData", "goBusData", "backBusData"],
   setup(props) {
+    console.log("🚀 ~ file: BusStop.vue ~ line 62 ~ setup ~ props", props);
+    const router = useRouter();
     const route = useRoute();
     const toggleShowBus = ref(true);
 
-    const goBus = computed(() => {
-      return props.busStopData.filter((bus) => bus.Direction === 0);
-    });
-    const backBus = computed(() => {
-      return props.busStopData.filter((bus) => bus.Direction === 1);
-    });
-
     const handleShowBus = () => {
       toggleShowBus.value = !toggleShowBus.value;
-      console.log(
-        "🚀 ~ file: BusStop.vue ~ line 60 ~ handleShowBus ~ toggleShowBus.value",
-        toggleShowBus.value
-      );
     };
-    return { goBus, backBus, handleShowBus, toggleShowBus };
+
+    const handleClick = () => {
+      router.push({ name: "CityBus", params: { city: route.params.city } });
+    };
+    return {
+      handleShowBus,
+      toggleShowBus,
+      handleClick,
+    };
   },
 };
 </script>
@@ -128,5 +143,16 @@ export default {
   height: 37px;
   background: #e0e0e0;
   border-radius: 5px 5px 0px 0px;
+}
+.stop-info {
+  display: flex;
+}
+.stop-estimatetime {
+  width: 77px;
+  height: 26px;
+  background: #355f8b;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #ffffff;
 }
 </style>

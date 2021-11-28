@@ -8,7 +8,6 @@
     :busData="busData"
     @getRouteName="getBusStop"
   />
-  <!-- <BusStop v-show="toggleSearchResult" /> -->
 </template>
 
 <script>
@@ -17,16 +16,15 @@ import getCityBus from "../composables/getCityBus";
 import { useRoute } from "vue-router";
 import { onMounted, ref } from "@vue/runtime-core";
 import Search from "../components/Search.vue";
-// import BusStop from "../components/BusStop.vue";
 
 export default {
   components: { Search },
   setup(props) {
-    const { loadBus, busData, loadBusStop, busStopData } = getCityBus();
+    const { loadBus, busData } = getCityBus();
     const route = useRoute();
     const toggleSearchResult = ref(false);
 
-    loadBus();
+    loadBus(route.params.city);
 
     onMounted(() => {
       let mymap;

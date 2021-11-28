@@ -3,7 +3,11 @@
     <p>首頁/</p>
   </header>
   <div id="map"></div>
-  <BusStop :busStopData="busStopData" />
+  <BusStop
+    :busStopData="busStopData"
+    :goBusData="goBusData"
+    :backBusData="backBusData"
+  />
 </template>
 
 <script>
@@ -16,8 +20,15 @@ import BusStop from "../components/BusStop.vue";
 export default {
   components: { BusStop },
   setup(props) {
-    const { loadBusStop, busStopData } = getCityBus();
+    const { loadBusStop, busStopData, loadBusTime, goBusData, backBusData } =
+      getCityBus();
     const route = useRoute();
+
+    loadBusTime(
+      route.params.city,
+      route.params.routeName,
+      route.params.routeUID
+    );
 
     loadBusStop(
       route.params.city,
@@ -43,7 +54,7 @@ export default {
       ).addTo(mymap);
     });
 
-    return { busStopData };
+    return { busStopData, goBusData, backBusData };
   },
 };
 </script>

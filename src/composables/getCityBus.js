@@ -21,6 +21,52 @@ const getCityBus = () => {
   const headers = getAuthorizationHeader()
   const busData = ref([])
   const busStopData = ref([])
+  const goBusData = ref([])
+  const backBusData = ref([])
+  const estimateTime = ref([])
+  const estimateGoBus = ref([])
+  const estimateBackBus = ref([])
+
+  // estimateGoBus.value = [{
+  //   "StopUID": "TPE39509",
+  //   "StopID": "39509",
+  //   "StopName": {
+  //     "Zh_tw": "師大分部",
+  //     "En": "National Taiwan Normal University Branch"
+  //   },
+  //   "RouteUID": "TPE10848",
+  //   "RouteID": "10848",
+  //   "RouteName": {
+  //     "Zh_tw": "505",
+  //     "En": "505"
+  //   },
+  //   "Direction": 0,
+  //   "EstimateTime": 570,
+  //   "StopStatus": 0,
+  //   "SrcUpdateTime": "2021-11-24T22:37:30+08:00",
+  //   "UpdateTime": "2021-11-24T22:37:34+08:00"
+  // },
+  // {
+  //   "StopUID": "TPE39482",
+  //   "StopID": "39482",
+  //   "StopName": {
+  //     "Zh_tw": "上塔悠",
+  //     "En": "Shangtayou"
+  //   },
+  //   "RouteUID": "TPE10848",
+  //   "RouteID": "10848",
+  //   "RouteName": {
+  //     "Zh_tw": "505",
+  //     "En": "505"
+  //   },
+  //   "Direction": 0,
+  //   "EstimateTime": 1570,
+  //   "StopStatus": 3,
+  //   "SrcUpdateTime": "2021-11-29T00:16:20+08:00",
+  //   "UpdateTime": "2021-11-29T00:16:27+08:00"
+  // }
+  // ]
+
 
 
   const loadBus = async (city = 'Taipei') => {
@@ -35,22 +81,126 @@ const getCityBus = () => {
 
   }
   // https://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/Taipei/12?$filter=contains(RouteID%2C%2710864%27)&$format=JSON
+  // https://ptx.transportdata.tw/MOTC/v2/Bus/DisplayStopOfRoute/City/Taipei/311?$filter=contains(RouteUID%2C%27TPE15563%27)&$format=JSON
   const loadBusStop = async (city, routeName, routeUID) => {
-    console.log("🚀 ~ file: getCityBus.js ~ line 39 ~ loadBusStop ~ routeId", routeUID)
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/DisplayStopOfRoute/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
       const data = await res.json()
       busStopData.value = data
+
+
+      busStopData.value.map(bus => {
+        if (bus.Direction === 0) {
+          goBusData.value = bus
+        } else {
+          backBusData.value = bus
+        }
+      })
+
+      // console.log("🚀 ~ file: getCityBus.js ~ line 45 ~ loadBusStop ~ busStopData.value", busStopData.value)
 
     } catch (error) {
       console.log(error)
     }
-
   }
 
 
-  return { loadBus, busData, loadBusStop, busStopData }
-}
 
+  // https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/Taipei/12?$filter=contains(RouteUID%2C%27TPE10864%27)&$format=JSON
+
+  const loadBusTime = async (city, routeName, routeUID) => {
+    const getPlateNumb = ref([])
+
+    try {
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const response = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const data = await res.json()
+      const responseData = await response.json()
+
+      estimateTime.value = data
+      getPlateNumb.value = responseData
+
+
+      estimateTime.value.map(bus => {
+        if (bus.Direction === 0) {
+          estimateGoBus.value.push(bus)
+        } else {
+          estimateBackBus.value.push(bus)
+        }
+      })
+
+      goBusData.value.Stops.reduce((needElements, item) => {
+        estimateGoBus.value.filter(bus => {
+          if (item.StopUID === bus.StopUID) {
+            item['EstimateTime'] = bus.EstimateTime ? bus.EstimateTime : ''
+            // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
+            if (bus.StopStatus = 1) {
+              item['StopStatus'] = '尚未發車'
+            } else if (bus.StopStatus = 2) {
+              item['StopStatus'] = '交管不停靠'
+            } else if (bus.StopStatus = 3) {
+              item['StopStatus'] = '末班車已過'
+            } else if (bus.StopStatus = 4) {
+              item['StopStatus'] = '今日未營運'
+            } else {
+              item['StopStatus'] = bus.StopStatus
+            }
+          }
+        })
+        return goBusData.value
+        // if (estimateGoBus.value.item.StopUID)
+      })
+
+      backBusData.value.Stops.reduce((needElements, item) => {
+        estimateBackBus.value.filter(bus => {
+          if (item.StopUID === bus.StopUID) {
+            item['EstimateTime'] = bus.EstimateTime ? bus.EstimateTime : ''
+
+            // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
+            if (bus.StopStatus = 1) {
+              item['StopStatus'] = '尚未發車'
+            } else if (bus.StopStatus = 2) {
+              item['StopStatus'] = '交管不停靠'
+            } else if (bus.StopStatus = 3) {
+              item['StopStatus'] = '末班車已過'
+            } else if (bus.StopStatus = 4) {
+              item['StopStatus'] = '今日未營運'
+            } else {
+              item['StopStatus'] = bus.StopStatus
+            }
+          }
+        })
+
+        return backBusData.value
+        // if (estimateGoBus.value.item.StopUID)
+      })
+
+      return { goBusData, backBusData }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  const combineBusData = () => {
+
+    // goBusData.value.Stops.reduce((needElements, item) => {
+    //   // estimateGoBus.value.filter(bus => {
+    //   //   if (item.StopUID === bus.StopUID) {
+    //   //     item['EstimateTime'] = bus.EstimateTime,
+    //   //       item['StopStatus'] = bus.StopStatus
+    //   //   }
+    //   // })
+    //   return goBusData.value
+    //   // if (estimateGoBus.value.item.StopUID)
+    // },
+
+    // )
+
+  }
+
+  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData }
+}
 
 export default getCityBus
