@@ -53,8 +53,6 @@ export default {
     };
 
     const handleClickSearch = (matchingBus) => {
-      console.log("matchingBus", matchingBus);
-
       emit("getRouteName", matchingBus);
     };
 
