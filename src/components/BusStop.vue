@@ -45,7 +45,7 @@
       >
         <div class="stop-info">
           <div class="stop-estimatetime">
-            <p v-show="stop.StopStatus !== 0">{{ (stop.StopStatus = 0) }}</p>
+            <p v-show="stop.StopStatus !== 0">{{ stop.StopStatus }}</p>
             <p v-if="stop.StopStatus === 0">
               {{ Math.floor(stop.EstimateTime / 60) }}分
             </p>
