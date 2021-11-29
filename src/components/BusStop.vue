@@ -26,9 +26,11 @@
       >
         <div class="stop-info">
           <div class="stop-estimatetime">
-            <p v-show="stop.StopStatus !== 0">{{ stop.StopStatus }}</p>
-            <p v-if="stop.StopStatus === 0">
-              {{ Math.floor(stop.EstimateTime / 60) }}
+            <p class="status" v-show="stop.StopStatus !== 0">
+              {{ stop.StopStatus }}
+            </p>
+            <p class="estimatetime" v-if="stop.StopStatus === 0">
+              {{ Math.floor(stop.EstimateTime / 60) }}分
             </p>
           </div>
           <div class="stop-name">
@@ -45,8 +47,10 @@
       >
         <div class="stop-info">
           <div class="stop-estimatetime">
-            <p v-show="stop.StopStatus !== 0">{{ stop.StopStatus }}</p>
-            <p v-if="stop.StopStatus === 0">
+            <p class="status" v-show="stop.StopStatus !== 0">
+              {{ stop.StopStatus }}
+            </p>
+            <p class="estimatetime" v-if="stop.StopStatus === 0">
               {{ Math.floor(stop.EstimateTime / 60) }}分
             </p>
           </div>
@@ -63,11 +67,13 @@
 import { computed, ref } from "@vue/reactivity";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import getCityBus from "../composables/getCityBus";
 
 export default {
-  props: ["busStopData", "goBusData", "backBusData"],
+  // props: ["busStopData", "goBusData", "backBusData"],
   setup(props) {
-    console.log("🚀 ~ file: BusStop.vue ~ line 62 ~ setup ~ props", props);
+    const { loadBusStop, busStopData, loadBusTime, goBusData, backBusData } =
+      getCityBus();
     const router = useRouter();
     const route = useRoute();
     const toggleShowBus = ref(true);
@@ -75,14 +81,31 @@ export default {
     const handleShowBus = () => {
       toggleShowBus.value = !toggleShowBus.value;
     };
-
+    loadBusStop(
+      route.params.city,
+      route.params.routeName,
+      route.params.routeUID
+    );
+    loadBusTime(
+      route.params.city,
+      route.params.routeName,
+      route.params.routeUID
+    );
     const handleClick = () => {
       router.push({ name: "CityBus", params: { city: route.params.city } });
     };
+
+    console.log(
+      "🚀 ~ file: BusStop.vue ~ line 75 ~ setup ~ goBusData",
+      goBusData
+    );
+
     return {
       handleShowBus,
       toggleShowBus,
       handleClick,
+      goBusData,
+      backBusData,
     };
   },
 };
@@ -154,7 +177,18 @@ export default {
   height: 26px;
   background: #355f8b;
   border-radius: 10px;
+}
+
+.stop-estimatetime > .estimatetime,
+.status {
   font-size: 14px;
   color: #ffffff;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.stop-estimatetime > .status {
+  font-size: 12px;
 }
 </style>

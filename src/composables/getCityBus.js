@@ -113,15 +113,17 @@ const getCityBus = () => {
 
     try {
       const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
-      const response = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      // const response = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
       const data = await res.json()
-      const responseData = await response.json()
+
+      // const responseData = await response.json()
 
       estimateTime.value = data
-      getPlateNumb.value = responseData
+      // getPlateNumb.value = responseData
 
 
       estimateTime.value.map(bus => {
+        console.log("🚀 ~ file: getCityBus.js ~ line 126 ~ loadBusTime ~ bus", bus)
         if (bus.Direction === 0) {
           estimateGoBus.value.push(bus)
         } else {
@@ -129,18 +131,20 @@ const getCityBus = () => {
         }
       })
 
+
       goBusData.value.Stops.reduce((needElements, item) => {
         estimateGoBus.value.filter(bus => {
+
           if (item.StopUID === bus.StopUID) {
             item['EstimateTime'] = bus.EstimateTime ? bus.EstimateTime : ''
             // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
-            if (bus.StopStatus = 1) {
+            if (bus.StopStatus === 1) {
               item['StopStatus'] = '尚未發車'
-            } else if (bus.StopStatus = 2) {
+            } else if (bus.StopStatus === 2) {
               item['StopStatus'] = '交管不停靠'
-            } else if (bus.StopStatus = 3) {
+            } else if (bus.StopStatus === 3) {
               item['StopStatus'] = '末班車已過'
-            } else if (bus.StopStatus = 4) {
+            } else if (bus.StopStatus === 4) {
               item['StopStatus'] = '今日未營運'
             } else {
               item['StopStatus'] = bus.StopStatus
@@ -157,13 +161,13 @@ const getCityBus = () => {
             item['EstimateTime'] = bus.EstimateTime ? bus.EstimateTime : ''
 
             // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
-            if (bus.StopStatus = 1) {
+            if (bus.StopStatus === 1) {
               item['StopStatus'] = '尚未發車'
-            } else if (bus.StopStatus = 2) {
+            } else if (bus.StopStatus === 2) {
               item['StopStatus'] = '交管不停靠'
-            } else if (bus.StopStatus = 3) {
+            } else if (bus.StopStatus === 3) {
               item['StopStatus'] = '末班車已過'
-            } else if (bus.StopStatus = 4) {
+            } else if (bus.StopStatus === 4) {
               item['StopStatus'] = '今日未營運'
             } else {
               item['StopStatus'] = bus.StopStatus
