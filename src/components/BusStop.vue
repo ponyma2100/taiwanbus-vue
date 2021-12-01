@@ -218,5 +218,7 @@ export default {
 }
 .stop-busnumb {
   margin-left: auto;
+  font-size: 14px;
+  color: #d08181;
 }
 </style>

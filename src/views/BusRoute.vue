@@ -19,14 +19,20 @@ export default {
     const { loadBusStop, busStopData } = getCityBus();
     const route = useRoute();
 
-    loadBusStop(
-      route.params.city,
-      route.params.routeName,
-      route.params.routeUID
-    );
-    onMounted(() => {
+    onMounted(async () => {
+      await loadBusStop(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
       let mymap;
-      mymap = L.map("map").setView([25.03, 121.56], 13);
+      mymap = L.map("map").setView(
+        [
+          busStopData.value[0].Stops[0].StopPosition.PositionLat,
+          busStopData.value[0].Stops[0].StopPosition.PositionLon,
+        ],
+        13
+      );
 
       L.tileLayer(
         "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
@@ -41,6 +47,19 @@ export default {
             "pk.eyJ1IjoicG9ueWF3ZXNvbWUiLCJhIjoiY2tscWd3djhwMHVwODJvcHM2dTJxcXByciJ9.EMsPVi7a-UV29InwyJ5m4g",
         }
       ).addTo(mymap);
+
+      const setMarker = () => {
+        busStopData.value[0].Stops.forEach((stop) => {
+          L.marker([
+            stop.StopPosition.PositionLat,
+            stop.StopPosition.PositionLon,
+          ])
+            .addTo(mymap)
+            .bindPopup(stop.StopName.Zh_tw)
+            .openPopup();
+        });
+      };
+      setMarker();
     });
 
     return { busStopData };
