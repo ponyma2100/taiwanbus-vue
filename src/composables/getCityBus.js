@@ -26,6 +26,8 @@ const getCityBus = () => {
   const estimateTime = ref([])
   const estimateGoBus = ref([])
   const estimateBackBus = ref([])
+  const plateNumb = ref([])
+
 
   // estimateGoBus.value = [{
   //   "StopUID": "TPE39509",
@@ -97,7 +99,6 @@ const getCityBus = () => {
         }
       })
 
-      // console.log("🚀 ~ file: getCityBus.js ~ line 45 ~ loadBusStop ~ busStopData.value", busStopData.value)
 
     } catch (error) {
       console.log(error)
@@ -109,21 +110,16 @@ const getCityBus = () => {
   // https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/Taipei/12?$filter=contains(RouteUID%2C%27TPE10864%27)&$format=JSON
 
   const loadBusTime = async (city, routeName, routeUID) => {
-    const getPlateNumb = ref([])
 
     try {
       const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
-      // const response = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+
       const data = await res.json()
-
-      // const responseData = await response.json()
-
       estimateTime.value = data
       // getPlateNumb.value = responseData
 
 
       estimateTime.value.map(bus => {
-        console.log("🚀 ~ file: getCityBus.js ~ line 126 ~ loadBusTime ~ bus", bus)
         if (bus.Direction === 0) {
           estimateGoBus.value.push(bus)
         } else {
@@ -187,24 +183,37 @@ const getCityBus = () => {
   }
 
 
-  const combineBusData = () => {
+  const loadPlateNumb = async (city, routeName, routeUID) => {
 
-    // goBusData.value.Stops.reduce((needElements, item) => {
-    //   // estimateGoBus.value.filter(bus => {
-    //   //   if (item.StopUID === bus.StopUID) {
-    //   //     item['EstimateTime'] = bus.EstimateTime,
-    //   //       item['StopStatus'] = bus.StopStatus
-    //   //   }
-    //   // })
-    //   return goBusData.value
-    //   // if (estimateGoBus.value.item.StopUID)
-    // },
+    const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+    const data = await res.json()
+    plateNumb.value = data
 
-    // )
+    goBusData.value.Stops.reduce((needElements, item) => {
+      plateNumb.value.filter(bus => {
+
+        if (item.StopUID === bus.StopUID) {
+          item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
+          console.log("🚀 ~ file: getCityBus.js ~ line 197 ~ goBusData.value.Stops.reduce ~ item", item)
+        }
+      })
+      return goBusData.value
+    })
+
+    backBusData.value.Stops.reduce((needElements, item) => {
+      plateNumb.value.filter(bus => {
+
+        if (item.StopUID === bus.StopUID) {
+          item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
+        }
+      })
+      return backBusData.value
+    })
+
 
   }
 
-  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData }
+  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData, loadPlateNumb }
 }
 
 export default getCityBus

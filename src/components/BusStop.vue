@@ -36,6 +36,9 @@
           <div class="stop-name">
             <p>{{ stop.StopName.Zh_tw }}</p>
           </div>
+          <div class="stop-busnumb">
+            {{ stop.PlateNumb }}
+          </div>
         </div>
       </li>
     </ul>
@@ -57,6 +60,9 @@
           <div class="stop-name">
             <p>{{ stop.StopName.Zh_tw }}</p>
           </div>
+          <div class="stop-busnumb">
+            {{ stop.PlateNumb }}
+          </div>
         </div>
       </li>
     </ul>
@@ -68,12 +74,18 @@ import { computed, ref } from "@vue/reactivity";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import getCityBus from "../composables/getCityBus";
+import { onMounted } from "@vue/runtime-core";
 
 export default {
-  // props: ["busStopData", "goBusData", "backBusData"],
   setup(props) {
-    const { loadBusStop, busStopData, loadBusTime, goBusData, backBusData } =
-      getCityBus();
+    const {
+      loadBusStop,
+      busStopData,
+      loadBusTime,
+      goBusData,
+      backBusData,
+      loadPlateNumb,
+    } = getCityBus();
     const router = useRouter();
     const route = useRoute();
     const toggleShowBus = ref(true);
@@ -81,24 +93,28 @@ export default {
     const handleShowBus = () => {
       toggleShowBus.value = !toggleShowBus.value;
     };
-    loadBusStop(
-      route.params.city,
-      route.params.routeName,
-      route.params.routeUID
-    );
-    loadBusTime(
-      route.params.city,
-      route.params.routeName,
-      route.params.routeUID
-    );
+
+    onMounted(async () => {
+      await loadBusStop(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusTime(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadPlateNumb(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+    });
+
     const handleClick = () => {
       router.push({ name: "CityBus", params: { city: route.params.city } });
     };
-
-    console.log(
-      "🚀 ~ file: BusStop.vue ~ line 75 ~ setup ~ goBusData",
-      goBusData
-    );
 
     return {
       handleShowBus,
@@ -171,6 +187,9 @@ export default {
 }
 .stop-info {
   display: flex;
+  font-size: 16px;
+  width: 100%;
+  justify-content: space-between;
 }
 .stop-estimatetime {
   width: 77px;
@@ -190,5 +209,8 @@ export default {
 }
 .stop-estimatetime > .status {
   font-size: 12px;
+}
+.stop-busnumb {
+  margin-left: auto;
 }
 </style>
