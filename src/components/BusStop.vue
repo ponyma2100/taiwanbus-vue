@@ -85,6 +85,7 @@ export default {
       goBusData,
       backBusData,
       loadPlateNumb,
+      loadBusPosition,
     } = getCityBus();
     const router = useRouter();
     const route = useRoute();
@@ -106,6 +107,11 @@ export default {
         route.params.routeUID
       );
       await loadPlateNumb(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusPosition(
         route.params.city,
         route.params.routeName,
         route.params.routeUID

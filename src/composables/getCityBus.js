@@ -27,6 +27,7 @@ const getCityBus = () => {
   const estimateGoBus = ref([])
   const estimateBackBus = ref([])
   const plateNumb = ref([])
+  const busPosition = ref([])
 
 
   // estimateGoBus.value = [{
@@ -194,7 +195,6 @@ const getCityBus = () => {
 
         if (item.StopUID === bus.StopUID) {
           item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
-          console.log("🚀 ~ file: getCityBus.js ~ line 197 ~ goBusData.value.Stops.reduce ~ item", item)
         }
       })
       return goBusData.value
@@ -209,11 +209,36 @@ const getCityBus = () => {
       })
       return backBusData.value
     })
-
-
   }
 
-  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData, loadPlateNumb }
+  // https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/Taipei/505?$format=JSON
+  const loadBusPosition = async (city, routeName, routeUID) => {
+
+    const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+    const data = await res.json()
+    busPosition.value = data
+
+    goBusData.value.Stops.reduce((needElements, item) => {
+      busPosition.value.filter(bus => {
+        if (item.PlateNumb === bus.PlateNumb) {
+          item['BusPosition'] = bus.BusPosition ? bus.BusPosition : ''
+        }
+      })
+      return goBusData.value
+    })
+
+    backBusData.value.Stops.reduce((needElements, item) => {
+      busPosition.value.filter(bus => {
+
+        if (item.PlateNumb === bus.PlateNumb) {
+          item['BusPosition'] = bus.BusPosition ? bus.BusPosition : ''
+        }
+      })
+      return backBusData.value
+    })
+  }
+
+  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData, loadPlateNumb, loadBusPosition }
 }
 
 export default getCityBus
