@@ -28,6 +28,7 @@ const getCityBus = () => {
   const estimateBackBus = ref([])
   const plateNumb = ref([])
   const busPosition = ref([])
+  const busShape = ref([])
 
 
   // estimateGoBus.value = [{
@@ -238,7 +239,22 @@ const getCityBus = () => {
     })
   }
 
-  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData, loadPlateNumb, loadBusPosition }
+  // https://ptx.transportdata.tw/MOTC/v2/Bus/Shape/City/Taipei/505?$format=JSON
+
+  const loadBusShape = async (city, routeName, routeUID) => {
+    try {
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Shape/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const data = await res.json()
+      busShape.value = data
+
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  return { loadBus, busData, loadBusStop, busStopData, loadBusTime, goBusData, backBusData, loadPlateNumb, loadBusPosition, loadBusShape, busShape }
 }
 
 export default getCityBus

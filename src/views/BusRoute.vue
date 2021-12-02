@@ -16,11 +16,16 @@ import BusStop from "../components/BusStop.vue";
 export default {
   components: { BusStop },
   setup(props) {
-    const { loadBusStop, busStopData } = getCityBus();
+    const { loadBusStop, busStopData, loadBusShape, busShape } = getCityBus();
     const route = useRoute();
 
     onMounted(async () => {
       await loadBusStop(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusShape(
         route.params.city,
         route.params.routeName,
         route.params.routeUID
@@ -60,6 +65,27 @@ export default {
         });
       };
       setMarker();
+
+      const drawPolyLine = () => {
+        // 建立一個 wkt 的實體
+        const wicket = new Wkt.Wkt();
+        const geojsonFeature = wicket.read(busShape.value[0].Geometry).toJson();
+
+        const myStyle = {
+          color: "#355F8B",
+          weight: 5,
+          opacity: 0.65,
+        };
+        const myLayer = L.geoJSON(geojsonFeature, {
+          style: myStyle,
+        }).addTo(mymap);
+
+        myLayer.addData(geojsonFeature);
+        // zoom the map to the layer
+        mymap.fitBounds(myLayer.getBounds());
+      };
+
+      drawPolyLine();
     });
 
     return { busStopData };
