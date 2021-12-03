@@ -8,11 +8,11 @@
         <p>{{ $route.params.routeName }}</p>
       </div>
       <ul class="nav nav-pills">
-        <li class="nav-item" @click="handleShowBus">
+        <li class="nav-item" @click="handleShowGo">
           <router-link class="nav-link active" to="#">去程{{}}</router-link>
           <!-- busStopData[0].Stops[0].StopName.Zh_tw -->
         </li>
-        <li class="nav-item" @click="handleShowBus">
+        <li class="nav-item" @click="handleShowBack">
           <router-link class="nav-link" to="#">返程{{}}</router-link>
         </li>
       </ul>
@@ -77,10 +77,9 @@ import getCityBus from "../composables/getCityBus";
 import { onMounted } from "@vue/runtime-core";
 
 export default {
-  setup(props) {
+  setup(props, { emit }) {
     const {
       loadBusStop,
-      busStopData,
       loadBusTime,
       goBusData,
       backBusData,
@@ -91,8 +90,13 @@ export default {
     const route = useRoute();
     const toggleShowBus = ref(true);
 
-    const handleShowBus = () => {
-      toggleShowBus.value = !toggleShowBus.value;
+    const handleShowGo = () => {
+      toggleShowBus.value = true;
+      emit("showGo");
+    };
+    const handleShowBack = () => {
+      toggleShowBus.value = false;
+      emit("showBack");
     };
 
     onMounted(async () => {
@@ -123,7 +127,8 @@ export default {
     };
 
     return {
-      handleShowBus,
+      handleShowGo,
+      handleShowBack,
       toggleShowBus,
       handleClick,
       goBusData,

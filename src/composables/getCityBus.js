@@ -247,8 +247,6 @@ const getCityBus = () => {
       const data = await res.json()
       busShape.value = data
 
-
-
     } catch (error) {
       console.log(error)
     }

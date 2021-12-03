@@ -3,7 +3,11 @@
     <p>首頁/</p>
   </header>
   <div id="map"></div>
-  <BusStop :busStopData="busStopData" />
+  <BusStop
+    :busStopData="busStopData"
+    @showGo="showGoBus"
+    @showBack="showBackBus"
+  />
 </template>
 
 <script>
@@ -12,12 +16,23 @@ import { useRoute } from "vue-router";
 import { onMounted, ref } from "@vue/runtime-core";
 import getCityBus from "../composables/getCityBus";
 import BusStop from "../components/BusStop.vue";
-import busIcon from '../assets/busicon.png'
+import stopIconUrl from "../assets/stopicon.png";
+import busUrl from "../assets/busicon.png";
 
 export default {
   components: { BusStop },
   setup(props) {
-    const { loadBusStop, busStopData, loadBusShape, busShape } = getCityBus();
+    const {
+      loadBusStop,
+      busStopData,
+      loadBusShape,
+      loadBusTime,
+      busShape,
+      loadBusPosition,
+      loadPlateNumb,
+      goBusData,
+      backBusData,
+    } = getCityBus();
     const route = useRoute();
 
     onMounted(async () => {
@@ -31,6 +46,22 @@ export default {
         route.params.routeName,
         route.params.routeUID
       );
+      await loadPlateNumb(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusPosition(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusTime(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+
       let mymap;
       mymap = L.map("map").setView(
         [
@@ -53,25 +84,44 @@ export default {
             "pk.eyJ1IjoicG9ueWF3ZXNvbWUiLCJhIjoiY2tscWd3djhwMHVwODJvcHM2dTJxcXByciJ9.EMsPVi7a-UV29InwyJ5m4g",
         }
       ).addTo(mymap);
-      let greenIcon = L.icon({
-        iconUrl: busIcon,
-        iconSize: [48, 48], // size of the icon
-        iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-        popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+      let stopIcon = L.icon({
+        iconUrl: stopIconUrl,
+        iconSize: [36, 36], // size of the icon
       });
 
-      const setMarker = () => {
+      const setStopMarker = () => {
         busStopData.value[0].Stops.forEach((stop) => {
           L.marker(
             [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
-            { icon: greenIcon }
+            { icon: stopIcon }
           )
             .addTo(mymap)
             .bindPopup(stop.StopName.Zh_tw)
             .openPopup();
         });
       };
-      setMarker();
+      setStopMarker();
+
+      let busIcon = L.icon({
+        iconUrl: busUrl,
+        iconSize: [48, 48], // size of the icon
+      });
+
+      const setBusMarker = () => {
+        goBusData.value.Stops.forEach((stop) => {
+          if (stop.BusPosition) {
+            L.marker(
+              [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
+              { icon: busIcon }
+            )
+              .addTo(mymap)
+              .bindPopup(stop.PlateNumb)
+              .openPopup();
+          }
+        });
+      };
+
+      setBusMarker();
 
       const drawPolyLine = () => {
         // 建立一個 wkt 的實體
@@ -93,10 +143,63 @@ export default {
       };
 
       drawPolyLine();
-
     });
 
-    return { busStopData };
+    const showGoBus = () => {
+      console.log("showGo");
+      // let busIcon = L.icon({
+      //   iconUrl: busUrl,
+      //   iconSize: [48, 48], // size of the icon
+      // });
+      // const setBusMarker = () => {
+      //   goBusData.value.Stops.forEach((stop) => {
+      //     if (stop.BusPosition) {
+      //       L.marker(
+      //         [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
+      //         { icon: busIcon }
+      //       )
+      //         .addTo(mymap)
+      //         .bindPopup(stop.PlateNumb)
+      //         .openPopup();
+      //     }
+      //     console.log(
+      //       "🚀 ~ file: BusRoute.vue ~ line 162 ~ goBusData.value.Stops.forEach ~ mymap",
+      //       mymap
+      //     );
+      //   });
+      // };
+      // setBusMarker();
+    };
+
+    const showBackBus = () => {
+      console.log("showBack");
+      // let busIcon = L.icon({
+      //   iconUrl: busUrl,
+      //   iconSize: [48, 48], // size of the icon
+      // });
+      // const setBusMarker = () => {
+      //   backBusData.value.Stops.forEach((stop) => {
+      //     if (stop.BusPosition) {
+      //       L.marker(
+      //         [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
+      //         { icon: busIcon }
+      //       )
+      //         .addTo(mymap)
+      //         .bindPopup(stop.PlateNumb)
+      //         .openPopup();
+      //     }
+      //   });
+      // };
+      // setBusMarker();
+    };
+
+    return {
+      busStopData,
+      goBusData,
+      backBusData,
+      showGoBus,
+      showBackBus,
+    };
   },
 };
 </script>
