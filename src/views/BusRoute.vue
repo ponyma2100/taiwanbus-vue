@@ -12,6 +12,7 @@ import { useRoute } from "vue-router";
 import { onMounted, ref } from "@vue/runtime-core";
 import getCityBus from "../composables/getCityBus";
 import BusStop from "../components/BusStop.vue";
+import busIcon from '../assets/busicon.png'
 
 export default {
   components: { BusStop },
@@ -52,13 +53,19 @@ export default {
             "pk.eyJ1IjoicG9ueWF3ZXNvbWUiLCJhIjoiY2tscWd3djhwMHVwODJvcHM2dTJxcXByciJ9.EMsPVi7a-UV29InwyJ5m4g",
         }
       ).addTo(mymap);
+      let greenIcon = L.icon({
+        iconUrl: busIcon,
+        iconSize: [48, 48], // size of the icon
+        iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+        popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+      });
 
       const setMarker = () => {
         busStopData.value[0].Stops.forEach((stop) => {
-          L.marker([
-            stop.StopPosition.PositionLat,
-            stop.StopPosition.PositionLon,
-          ])
+          L.marker(
+            [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
+            { icon: greenIcon }
+          )
             .addTo(mymap)
             .bindPopup(stop.StopName.Zh_tw)
             .openPopup();
@@ -86,6 +93,7 @@ export default {
       };
 
       drawPolyLine();
+
     });
 
     return { busStopData };
