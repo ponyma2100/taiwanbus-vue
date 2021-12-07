@@ -34,6 +34,17 @@ export default {
       backBusData,
     } = getCityBus();
     const route = useRoute();
+    const myLayer = null;
+    let mymap = {};
+
+    let busIcon = L.icon({
+      iconUrl: busUrl,
+      iconSize: [48, 48], // size of the icon
+    });
+    let stopIcon = L.icon({
+      iconUrl: stopIconUrl,
+      iconSize: [36, 36], // size of the icon
+    });
 
     onMounted(async () => {
       await loadBusStop(
@@ -62,7 +73,7 @@ export default {
         route.params.routeUID
       );
 
-      let mymap;
+      // let mymap;
       mymap = L.map("map").setView(
         [
           busStopData.value[0].Stops[0].StopPosition.PositionLat,
@@ -70,7 +81,7 @@ export default {
         ],
         13
       );
-
+      // initialize map
       L.tileLayer(
         "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
         {
@@ -84,44 +95,10 @@ export default {
             "pk.eyJ1IjoicG9ueWF3ZXNvbWUiLCJhIjoiY2tscWd3djhwMHVwODJvcHM2dTJxcXByciJ9.EMsPVi7a-UV29InwyJ5m4g",
         }
       ).addTo(mymap);
-      let stopIcon = L.icon({
-        iconUrl: stopIconUrl,
-        iconSize: [36, 36], // size of the icon
-      });
 
-      const setStopMarker = () => {
-        busStopData.value[0].Stops.forEach((stop) => {
-          L.marker(
-            [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
-            { icon: stopIcon }
-          )
-            .addTo(mymap)
-            .bindPopup(stop.StopName.Zh_tw)
-            .openPopup();
-        });
-      };
-      setStopMarker();
+      setStopMarker(goBusData);
 
-      let busIcon = L.icon({
-        iconUrl: busUrl,
-        iconSize: [48, 48], // size of the icon
-      });
-
-      const setBusMarker = () => {
-        goBusData.value.Stops.forEach((stop) => {
-          if (stop.BusPosition) {
-            L.marker(
-              [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
-              { icon: busIcon }
-            )
-              .addTo(mymap)
-              .bindPopup(stop.PlateNumb)
-              .openPopup();
-          }
-        });
-      };
-
-      setBusMarker();
+      setBusMarker(goBusData);
 
       const drawPolyLine = () => {
         // 建立一個 wkt 的實體
@@ -147,50 +124,52 @@ export default {
 
     const showGoBus = () => {
       console.log("showGo");
-      // let busIcon = L.icon({
-      //   iconUrl: busUrl,
-      //   iconSize: [48, 48], // size of the icon
-      // });
-      // const setBusMarker = () => {
-      //   goBusData.value.Stops.forEach((stop) => {
-      //     if (stop.BusPosition) {
-      //       L.marker(
-      //         [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
-      //         { icon: busIcon }
-      //       )
-      //         .addTo(mymap)
-      //         .bindPopup(stop.PlateNumb)
-      //         .openPopup();
-      //     }
-      //     console.log(
-      //       "🚀 ~ file: BusRoute.vue ~ line 162 ~ goBusData.value.Stops.forEach ~ mymap",
-      //       mymap
-      //     );
-      //   });
-      // };
-      // setBusMarker();
+      clearMarkers();
+      setStopMarker(goBusData);
+      setBusMarker(goBusData);
     };
 
     const showBackBus = () => {
       console.log("showBack");
-      // let busIcon = L.icon({
-      //   iconUrl: busUrl,
-      //   iconSize: [48, 48], // size of the icon
-      // });
-      // const setBusMarker = () => {
-      //   backBusData.value.Stops.forEach((stop) => {
-      //     if (stop.BusPosition) {
-      //       L.marker(
-      //         [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
-      //         { icon: busIcon }
-      //       )
-      //         .addTo(mymap)
-      //         .bindPopup(stop.PlateNumb)
-      //         .openPopup();
-      //     }
-      //   });
-      // };
-      // setBusMarker();
+      clearMarkers();
+      setStopMarker(backBusData);
+      setBusMarker(backBusData);
+    };
+
+    // Set stop marker to map
+    const setStopMarker = (data) => {
+      data.value.Stops.forEach((stop) => {
+        L.marker(
+          [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
+          { icon: stopIcon }
+        )
+          .addTo(mymap)
+          .bindPopup(stop.StopName.Zh_tw)
+          .openPopup();
+      });
+    };
+
+    // Set bus marker to map
+    const setBusMarker = (data) => {
+      data.value.Stops.forEach((stop) => {
+        if (stop.BusPosition) {
+          L.marker(
+            [stop.BusPosition.PositionLat, stop.BusPosition.PositionLon],
+            { icon: busIcon }
+          )
+            .addTo(mymap)
+            .bindPopup(stop.PlateNumb)
+            .openPopup();
+        }
+      });
+    };
+
+    const clearMarkers = () => {
+      mymap.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          mymap.removeLayer(layer);
+        }
+      });
     };
 
     return {
