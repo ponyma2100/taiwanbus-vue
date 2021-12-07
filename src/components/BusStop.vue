@@ -8,12 +8,25 @@
         <p>{{ $route.params.routeName }}</p>
       </div>
       <ul class="nav nav-pills">
-        <li class="nav-item" @click="handleShowGo">
-          <router-link class="nav-link active" to="#">去程{{}}</router-link>
+        <li
+          class="nav-item"
+          @click="handleShowGo"
+          :class="{ active: busStatus === 'go' }"
+        >
+          <p>去程</p>
+          <!-- <span v-if="goBusData">{{ goStopName }}</span> -->
           <!-- busStopData[0].Stops[0].StopName.Zh_tw -->
         </li>
-        <li class="nav-item" @click="handleShowBack">
-          <router-link class="nav-link" to="#">返程{{}}</router-link>
+        <li
+          class="nav-item"
+          @click="handleShowBack"
+          :class="{ active: busStatus === 'back' }"
+        >
+          <p>返程</p>
+          <!-- <span v-if="backBusData">{{
+            backBusData.Stops[0].StopName.Zh_tw
+          }}</span> -->
+          <!-- <router-link class="nav-link" to="#">返程{{}}</router-link> -->
         </li>
       </ul>
     </div>
@@ -89,13 +102,24 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const toggleShowBus = ref(true);
+    const busStatus = ref("go");
 
     const handleShowGo = () => {
       toggleShowBus.value = true;
+      busStatus.value = "go";
+      console.log(
+        "🚀 ~ file: BusStop.vue ~ line 105 ~ handleShowGo ~ status.value",
+        busStatus.value
+      );
       emit("showGo");
     };
     const handleShowBack = () => {
       toggleShowBus.value = false;
+      busStatus.value = "back";
+      console.log(
+        "🚀 ~ file: BusStop.vue ~ line 111 ~ handleShowBack ~ status.value",
+        busStatus.value
+      );
       emit("showBack");
     };
 
@@ -126,6 +150,11 @@ export default {
       router.push({ name: "CityBus", params: { city: route.params.city } });
     };
 
+    // const goStopName = computed(() => {
+    //   return goBusData.value.Stops;
+    //   // return goBusData.value.Stops[0].StopName.Zh_tw;
+    // });
+
     return {
       handleShowGo,
       handleShowBack,
@@ -133,6 +162,7 @@ export default {
       handleClick,
       goBusData,
       backBusData,
+      busStatus,
     };
   },
 };
@@ -181,19 +211,26 @@ export default {
 }
 .nav-item {
   width: 50%;
-}
-.nav-link.active {
-  width: 100%;
-  height: 37px;
-
-  background: #355f8b;
+  font-size: 15px;
+  line-height: 18px;
+  background: #e0e0e0;
   border-radius: 5px 5px 0px 0px;
+  color: #000000;
+  cursor: pointer;
 }
 
 .nav-link {
   width: 100%;
   height: 37px;
   background: #e0e0e0;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.nav-item.active {
+  width: 50%;
+  height: 37px;
+  background: #355f8b;
+  color: #ffffff;
   border-radius: 5px 5px 0px 0px;
 }
 .stop-info {
