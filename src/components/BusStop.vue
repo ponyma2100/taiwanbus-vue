@@ -33,7 +33,7 @@
         v-for="stop in goBusData.Stops"
         :key="stop.StopUID"
       >
-        <div class="stop-info">
+        <div class="stop-info" :class="{ active: stop.PlateNumb }">
           <div class="stop-estimatetime">
             <p class="status" v-show="stop.StopStatus !== 0">
               {{ stop.StopStatus }}
@@ -57,7 +57,7 @@
         v-for="stop in backBusData.Stops"
         :key="stop.StopUID"
       >
-        <div class="stop-info">
+        <div class="stop-info" :class="{ active: stop.PlateNumb }">
           <div class="stop-estimatetime">
             <p class="status" v-show="stop.StopStatus !== 0">
               {{ stop.StopStatus }}
@@ -201,7 +201,7 @@ export default {
 .list-group-item-action {
   width: 98%;
 }
-.list-group-item-action::before {
+.stop-info::before {
   content: "";
   width: 12px;
   height: 12px;
@@ -213,6 +213,22 @@ export default {
   top: 21px;
   z-index: 999;
 }
+.stop-info.active::before {
+  background: #d08181;
+  border: 2px solid #d08181;
+}
+/* .list-group-item-action::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: #c4c4c4;
+  border-radius: 50%;
+  border: 2px solid #f8f8f8;
+  position: absolute;
+  right: -7px;
+  top: 21px;
+  z-index: 999;
+} */
 
 .list-group .list-group-item:hover {
   cursor: pointer;
