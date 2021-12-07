@@ -30,49 +30,6 @@ const getCityBus = () => {
   const busPosition = ref([])
   const busShape = ref([])
 
-
-  // estimateGoBus.value = [{
-  //   "StopUID": "TPE39509",
-  //   "StopID": "39509",
-  //   "StopName": {
-  //     "Zh_tw": "師大分部",
-  //     "En": "National Taiwan Normal University Branch"
-  //   },
-  //   "RouteUID": "TPE10848",
-  //   "RouteID": "10848",
-  //   "RouteName": {
-  //     "Zh_tw": "505",
-  //     "En": "505"
-  //   },
-  //   "Direction": 0,
-  //   "EstimateTime": 570,
-  //   "StopStatus": 0,
-  //   "SrcUpdateTime": "2021-11-24T22:37:30+08:00",
-  //   "UpdateTime": "2021-11-24T22:37:34+08:00"
-  // },
-  // {
-  //   "StopUID": "TPE39482",
-  //   "StopID": "39482",
-  //   "StopName": {
-  //     "Zh_tw": "上塔悠",
-  //     "En": "Shangtayou"
-  //   },
-  //   "RouteUID": "TPE10848",
-  //   "RouteID": "10848",
-  //   "RouteName": {
-  //     "Zh_tw": "505",
-  //     "En": "505"
-  //   },
-  //   "Direction": 0,
-  //   "EstimateTime": 1570,
-  //   "StopStatus": 3,
-  //   "SrcUpdateTime": "2021-11-29T00:16:20+08:00",
-  //   "UpdateTime": "2021-11-29T00:16:27+08:00"
-  // }
-  // ]
-
-
-
   const loadBus = async (city = 'Taipei') => {
     try {
       const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$select=RouteName,DepartureStopNameZh,destinationStopNameZh,RouteUID&$format=JSON`, { headers })
@@ -118,8 +75,6 @@ const getCityBus = () => {
 
       const data = await res.json()
       estimateTime.value = data
-      // getPlateNumb.value = responseData
-
 
       estimateTime.value.map(bus => {
         if (bus.Direction === 0) {
@@ -148,10 +103,11 @@ const getCityBus = () => {
               item['StopStatus'] = bus.StopStatus
             }
           }
+          // console.log("🚀 ~ file: getCityBus.js ~ line 136 ~ goBusData.value.Stops.reduce ~ item", item)
         })
         return goBusData.value
         // if (estimateGoBus.value.item.StopUID)
-      })
+      }, [])
 
       backBusData.value.Stops.reduce((needElements, item) => {
         estimateBackBus.value.filter(bus => {
@@ -175,7 +131,7 @@ const getCityBus = () => {
 
         return backBusData.value
         // if (estimateGoBus.value.item.StopUID)
-      })
+      }, [])
 
       return { goBusData, backBusData }
 
