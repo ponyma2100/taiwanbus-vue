@@ -3,7 +3,7 @@
     <div class="goback">
       <button @click="handleClick">&lt;返回搜尋</button>
     </div>
-    <div class="businfo" v-if="goBusData.Stops">
+    <div class="businfo" v-if="backBusData.Stops">
       <div class="bus-name">
         <p>{{ $route.params.routeName }}</p>
       </div>
@@ -14,7 +14,7 @@
           :class="{ active: busStatus === 'go' }"
         >
           <p>去程</p>
-          <span>{{ goBusData.Stops[0].StopName.Zh_tw }}</span>
+          <span>{{ backBusData.Stops[0].StopName.Zh_tw }}</span>
         </li>
         <li
           class="nav-item"
@@ -22,7 +22,7 @@
           :class="{ active: busStatus === 'back' }"
         >
           <p>返程</p>
-          <span>{{ backBusData.Stops[0].StopName.Zh_tw }}</span>
+          <span>{{ goBusData.Stops[0].StopName.Zh_tw }}</span>
         </li>
       </ul>
     </div>
@@ -32,6 +32,7 @@
         class="list-group-item list-group-item-action"
         v-for="stop in goBusData.Stops"
         :key="stop.StopUID"
+        @click="handleShowStop(stop.StopUID, goBusData.Direction)"
       >
         <div class="stop-info" :class="{ active: stop.PlateNumb }">
           <div class="stop-estimatetime">
@@ -56,6 +57,7 @@
         class="list-group-item list-group-item-action"
         v-for="stop in backBusData.Stops"
         :key="stop.StopUID"
+        @click="handleShowStop(stop.StopUID, backBusData.Direction)"
       >
         <div class="stop-info" :class="{ active: stop.PlateNumb }">
           <div class="stop-estimatetime">
@@ -119,6 +121,10 @@ export default {
       emit("showBack");
     };
 
+    const handleShowStop = (id, busStatus) => {
+      emit("showStop", { id, busStatus });
+    };
+
     onMounted(async () => {
       await loadBusStop(
         route.params.city,
@@ -154,6 +160,7 @@ export default {
       goBusData,
       backBusData,
       busStatus,
+      handleShowStop,
     };
   },
 };

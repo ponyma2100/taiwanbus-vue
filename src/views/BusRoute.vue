@@ -7,6 +7,7 @@
     :busStopData="busStopData"
     @showGo="showGoBus"
     @showBack="showBackBus"
+    @showStop="showStopInfo"
   />
 </template>
 
@@ -172,12 +173,53 @@ export default {
       });
     };
 
+    const showStopInfo = (payload) => {
+      console.log("showStopInfo", payload);
+      if (payload.busStatus === 0) {
+        goBusData.value.Stops.filter((stop) => {
+          if (stop.StopUID === payload.id) {
+            mymap.setView(
+              [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
+              20
+            );
+            // L.addTo(mymap).bindPopup(stop.StopStatus).openPopup();
+            L.popup()
+              .setLatLng([
+                stop.StopPosition.PositionLat,
+                stop.StopPosition.PositionLon,
+              ])
+              .setContent(stop.StopStatus)
+              .openOn(mymap);
+            // .bindPopup(stop.StopStatus, { closeButton: false })
+            // .openPopup();
+          }
+        });
+      } else {
+        backBusData.value.Stops.filter((stop) => {
+          if (stop.StopUID === payload.id) {
+            mymap.setView(
+              [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
+              20
+            );
+            L.popup()
+              .setLatLng([
+                stop.StopPosition.PositionLat,
+                stop.StopPosition.PositionLon,
+              ])
+              .setContent(stop.StopStatus)
+              .openOn(mymap);
+          }
+        });
+      }
+    };
+
     return {
       busStopData,
       goBusData,
       backBusData,
       showGoBus,
       showBackBus,
+      showStopInfo,
     };
   },
 };
