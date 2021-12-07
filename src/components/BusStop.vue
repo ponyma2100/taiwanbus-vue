@@ -3,7 +3,7 @@
     <div class="goback">
       <button @click="handleClick">&lt;返回搜尋</button>
     </div>
-    <div class="businfo">
+    <div class="businfo" v-if="goBusData.Stops">
       <div class="bus-name">
         <p>{{ $route.params.routeName }}</p>
       </div>
@@ -14,7 +14,7 @@
           :class="{ active: busStatus === 'go' }"
         >
           <p>去程</p>
-          <!-- <span v-if="goBusData">{{ goStopName }}</span> -->
+          <span>{{ goBusData.Stops[0].StopName.Zh_tw }}</span>
           <!-- busStopData[0].Stops[0].StopName.Zh_tw -->
         </li>
         <li
@@ -23,10 +23,7 @@
           :class="{ active: busStatus === 'back' }"
         >
           <p>返程</p>
-          <!-- <span v-if="backBusData">{{
-            backBusData.Stops[0].StopName.Zh_tw
-          }}</span> -->
-          <!-- <router-link class="nav-link" to="#">返程{{}}</router-link> -->
+          <span>{{ backBusData.Stops[0].StopName.Zh_tw }}</span>
         </li>
       </ul>
     </div>
@@ -150,11 +147,6 @@ export default {
       router.push({ name: "CityBus", params: { city: route.params.city } });
     };
 
-    // const goStopName = computed(() => {
-    //   return goBusData.value.Stops;
-    //   // return goBusData.value.Stops[0].StopName.Zh_tw;
-    // });
-
     return {
       handleShowGo,
       handleShowBack,
@@ -209,7 +201,15 @@ export default {
 .list-group .list-group-item:hover {
   cursor: pointer;
 }
+
+.nav-pills {
+  width: 100%;
+  height: 37px;
+}
 .nav-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 50%;
   font-size: 15px;
   line-height: 18px;
@@ -217,6 +217,11 @@ export default {
   border-radius: 5px 5px 0px 0px;
   color: #000000;
   cursor: pointer;
+}
+
+.nav-item p {
+  margin-bottom: 1px;
+  font-weight: 300;
 }
 
 .nav-link {
@@ -232,6 +237,9 @@ export default {
   background: #355f8b;
   color: #ffffff;
   border-radius: 5px 5px 0px 0px;
+}
+.nav-item.active span {
+  font-weight: bolder;
 }
 .stop-info {
   display: flex;
