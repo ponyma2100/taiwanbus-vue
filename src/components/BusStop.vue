@@ -15,7 +15,6 @@
         >
           <p>去程</p>
           <span>{{ goBusData.Stops[0].StopName.Zh_tw }}</span>
-          <!-- busStopData[0].Stops[0].StopName.Zh_tw -->
         </li>
         <li
           class="nav-item"
@@ -189,13 +188,30 @@ export default {
 .list-group {
   overflow-y: scroll;
   max-height: 60vh;
+  margin-right: 10px;
 }
 .list-group .list-group-item {
   font-weight: bold;
   font-size: 20px;
 }
 .list-group .list-group-item p {
-  margin-left: 10px;
+  margin-left: 5px;
+}
+
+.list-group-item-action {
+  width: 98%;
+}
+.list-group-item-action::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: #c4c4c4;
+  border-radius: 50%;
+  border: 2px solid #f8f8f8;
+  position: absolute;
+  right: -7px;
+  top: 21px;
+  z-index: 999;
 }
 
 .list-group .list-group-item:hover {
