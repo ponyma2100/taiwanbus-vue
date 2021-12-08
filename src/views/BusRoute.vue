@@ -140,12 +140,26 @@ export default {
     // Set stop marker to map
     const setStopMarker = (data) => {
       data.value.Stops.forEach((stop) => {
+        const busTime = ` ${Math.floor(stop.EstimateTime / 60)}分`;
+        let popupContent = "";
+
+        if (stop.StopStatus === 0) {
+          popupContent = `<span>${stop.StopName.Zh_tw}</span><span>${busTime}</span>`;
+        } else {
+          popupContent = `<span>${stop.StopName.Zh_tw}</span><span>${stop.StopStatus}</span>`;
+        }
+
+        var popupOptions = {
+          maxWidth: "500",
+          className: "stop-popup",
+        };
+
         L.marker(
           [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
           { icon: stopIcon }
         )
           .addTo(mymap)
-          .bindPopup(stop.StopName.Zh_tw)
+          .bindPopup(popupContent, popupOptions)
           .openPopup();
       });
     };
@@ -174,43 +188,47 @@ export default {
     };
 
     const showStopInfo = (payload) => {
-      console.log("showStopInfo", payload);
       if (payload.busStatus === 0) {
         goBusData.value.Stops.filter((stop) => {
           if (stop.StopUID === payload.id) {
-            mymap.setView(
-              [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
-              20
-            );
-            // L.addTo(mymap).bindPopup(stop.StopStatus).openPopup();
-            L.popup()
-              .setLatLng([
-                stop.StopPosition.PositionLat,
-                stop.StopPosition.PositionLon,
-              ])
-              .setContent(stop.StopStatus)
-              .openOn(mymap);
-            // .bindPopup(stop.StopStatus, { closeButton: false })
-            // .openPopup();
+            activePopup(stop, "custom-popup");
           }
         });
       } else {
         backBusData.value.Stops.filter((stop) => {
           if (stop.StopUID === payload.id) {
-            mymap.setView(
-              [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
-              20
-            );
-            L.popup()
-              .setLatLng([
-                stop.StopPosition.PositionLat,
-                stop.StopPosition.PositionLon,
-              ])
-              .setContent(stop.StopStatus)
-              .openOn(mymap);
+            activePopup(stop, "custom-popup");
           }
         });
       }
+    };
+
+    const activePopup = (data, classname) => {
+      const busTime = ` ${Math.floor(data.EstimateTime / 60)}分`;
+
+      let popupContent = "";
+
+      if (data.StopStatus === 0) {
+        popupContent = `<span>${data.StopName.Zh_tw}</span><span>${busTime}</span>`;
+      } else {
+        popupContent = `<span>${data.StopName.Zh_tw}</span><span>${data.StopStatus}</span>`;
+      }
+
+      mymap.setView(
+        [data.StopPosition.PositionLat, data.StopPosition.PositionLon],
+        20
+      );
+      L.popup({
+        closeButton: true,
+        autoClose: true,
+        className: classname,
+      })
+        .setLatLng([
+          data.StopPosition.PositionLat,
+          data.StopPosition.PositionLon,
+        ])
+        .setContent(popupContent)
+        .openOn(mymap);
     };
 
     return {
@@ -225,7 +243,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #map {
   height: 87vh;
   z-index: 10;
@@ -235,5 +253,23 @@ export default {
   position: absolute;
   top: 120px;
   left: 0px;
+}
+
+.custom-popup .leaflet-popup-content-wrapper,
+.stop-popup .leaflet-popup-content-wrapper {
+  background: #355f8b;
+  border: 2px solid #ffffff;
+}
+
+.custom-popup .leaflet-popup-content,
+.stop-popup .leaflet-popup-content {
+  display: flex;
+  flex-direction: column;
+  margin: 5px 10px;
+  text-align: center;
+}
+.custom-popup .leaflet-popup-content span,
+.stop-popup .leaflet-popup-content span {
+  color: #ffffff;
 }
 </style>
