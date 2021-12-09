@@ -84,13 +84,24 @@ const getCityBus = () => {
         }
       })
 
-
+      // goBusData.value.Stops.map(stop => {
+      //         if(stop.EstimateTime !== null && stop.EstimateTime <= 60) {
+      //           return ''
+      //         }
       goBusData.value.Stops.reduce((needElements, item) => {
         estimateGoBus.value.filter(bus => {
-
           if (item.StopUID === bus.StopUID) {
-            item['EstimateTime'] = bus.EstimateTime ? bus.EstimateTime : ''
-            // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
+
+            // EstimateTime
+            if (bus.EstimateTime <= 30) {
+              item['EstimateTime'] = '進站中'
+            } else if (bus.EstimateTime <= 60) {
+              item['EstimateTime'] = '即將進站'
+            } else {
+              item['EstimateTime'] = Math.floor(bus.EstimateTime / 60) + '分'
+            }
+
+            // Bus Status [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
             if (bus.StopStatus === 1) {
               item['StopStatus'] = '尚未發車'
             } else if (bus.StopStatus === 2) {
@@ -103,16 +114,20 @@ const getCityBus = () => {
               item['StopStatus'] = bus.StopStatus
             }
           }
-          // console.log("🚀 ~ file: getCityBus.js ~ line 136 ~ goBusData.value.Stops.reduce ~ item", item)
         })
         return goBusData.value
-        // if (estimateGoBus.value.item.StopUID)
       }, [])
 
       backBusData.value.Stops.reduce((needElements, item) => {
         estimateBackBus.value.filter(bus => {
           if (item.StopUID === bus.StopUID) {
-            item['EstimateTime'] = bus.EstimateTime ? bus.EstimateTime : ''
+            if (bus.EstimateTime <= 30) {
+              item['EstimateTime'] = '進站中'
+            } else if (bus.EstimateTime <= 60) {
+              item['EstimateTime'] = '即將進站'
+            } else {
+              item['EstimateTime'] = Math.floor(bus.EstimateTime / 60) + '分'
+            }
 
             // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
             if (bus.StopStatus === 1) {

@@ -40,7 +40,8 @@
               {{ stop.StopStatus }}
             </p>
             <p class="estimatetime" v-if="stop.StopStatus === 0">
-              {{ Math.floor(stop.EstimateTime / 60) }}分
+              {{ stop.EstimateTime }}
+              <!-- {{ Math.floor(stop.EstimateTime / 60) }}分 -->
             </p>
           </div>
           <div class="stop-name">
@@ -65,7 +66,7 @@
               {{ stop.StopStatus }}
             </p>
             <p class="estimatetime" v-if="stop.StopStatus === 0">
-              {{ Math.floor(stop.EstimateTime / 60) }}分
+              {{ stop.EstimateTime }}
             </p>
           </div>
           <div class="stop-name">

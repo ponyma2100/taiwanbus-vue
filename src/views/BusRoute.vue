@@ -140,7 +140,8 @@ export default {
     // Set stop marker to map
     const setStopMarker = (data) => {
       data.value.Stops.forEach((stop) => {
-        const busTime = ` ${Math.floor(stop.EstimateTime / 60)}分`;
+        const busTime = stop.EstimateTime;
+        // const busTime = ` ${Math.floor(stop.EstimateTime / 60)}分`;
         let popupContent = "";
 
         if (stop.StopStatus === 0) {
@@ -204,7 +205,8 @@ export default {
     };
 
     const activePopup = (data, classname) => {
-      const busTime = ` ${Math.floor(data.EstimateTime / 60)}分`;
+      const busTime = data.EstimateTime;
+      // const busTime = ` ${Math.floor(data.EstimateTime / 60)}分`;
 
       let popupContent = "";
 
