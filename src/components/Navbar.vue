@@ -22,19 +22,14 @@ export default {};
 nav {
   display: flex;
   align-items: center;
-  padding: 20px;
   width: 100%;
   margin: 0 auto;
 }
 .navbar {
-  height: 80px;
+  height: 60px;
   border: 1px solid black;
 }
 
-/* a.router-link-active {
-  color: #ffffff;
-  border-radius: 4px;
-} */
 .links {
   display: flex;
   justify-content: center;

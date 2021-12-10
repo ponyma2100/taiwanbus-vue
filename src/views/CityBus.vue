@@ -1,13 +1,15 @@
 <template>
-  <header>
-    <p>首頁/</p>
-  </header>
-  <div id="map"></div>
-  <Search
-    v-show="!toggleSearchResult"
-    :busData="busData"
-    @getRouteName="getBusStop"
-  />
+  <div class="citybus">
+    <header>
+      <p>首頁/</p>
+    </header>
+    <div id="map"></div>
+    <Search
+      v-show="!toggleSearchResult"
+      :busData="busData"
+      @getRouteName="getBusStop"
+    />
+  </div>
 </template>
 
 <script>
@@ -45,19 +47,6 @@ export default {
       ).addTo(mymap);
     });
 
-    // const getBusStop = (matchingBus) => {
-    //   console.log(
-    //     "🚀 ~ file: CityBus.vue ~ line 55 ~ getBusStop ~ matchingBus[0].RouteID",
-    //     matchingBus
-    //   );
-
-    //   loadBusStop(
-    //     route.params.city,
-    //     matchingBus[0].RouteName.Zh_tw,
-    //     matchingBus[0].RouteID
-    //   );
-    // };
-
     return { busData };
   },
 };
@@ -65,8 +54,11 @@ export default {
 
 <style scoped>
 #map {
-  height: 87vh;
+  height: 85vh;
   z-index: 10;
+}
+.citybus {
+  height: 85vh;
 }
 
 .search,

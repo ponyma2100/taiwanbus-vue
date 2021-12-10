@@ -27,7 +27,7 @@ export default {
 <style scoped>
 .main {
   width: 100%;
-  height: 90%;
+  height: 84vh;
 }
 .background {
   display: flex;

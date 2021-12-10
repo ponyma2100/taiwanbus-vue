@@ -6,7 +6,7 @@
         <input
           class="form-control"
           id="exampleDataList"
-          placeholder="輸入公車路線 / 起迄方向名或關鍵字..."
+          placeholder="請輸入公車路線"
           v-model="searchBus"
         />
         <div class="clearbtn" @click="handleClear">
@@ -71,13 +71,14 @@ export default {
   z-index: 999;
 }
 .search-bar {
-  width: 20vw;
+  width: 18vw;
   min-width: 200px;
+  position: relative;
 }
 .clearbtn {
   position: absolute;
-  top: 59px;
-  right: 60px;
+  top: 5px;
+  right: 5px;
   cursor: pointer;
 }
 
