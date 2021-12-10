@@ -143,6 +143,7 @@ export default {
         const busTime = stop.EstimateTime;
         // const busTime = ` ${Math.floor(stop.EstimateTime / 60)}分`;
         let popupContent = "";
+        let popupOptions = {};
 
         if (stop.StopStatus === 0) {
           popupContent = `<span>${stop.StopName.Zh_tw}</span><span>${busTime}</span>`;
@@ -150,10 +151,20 @@ export default {
           popupContent = `<span>${stop.StopName.Zh_tw}</span><span>${stop.StopStatus}</span>`;
         }
 
-        var popupOptions = {
-          maxWidth: "500",
-          className: "stop-popup",
-        };
+        if (
+          stop.EstimateTime === "進站中" ||
+          stop.EstimateTime === "即將進站"
+        ) {
+          popupOptions = {
+            maxWidth: "500",
+            className: "stop-popup-ongoing",
+          };
+        } else {
+          popupOptions = {
+            maxWidth: "500",
+            className: "stop-popup",
+          };
+        }
 
         L.marker(
           [stop.StopPosition.PositionLat, stop.StopPosition.PositionLon],
@@ -192,13 +203,23 @@ export default {
       if (payload.busStatus === 0) {
         goBusData.value.Stops.filter((stop) => {
           if (stop.StopUID === payload.id) {
-            activePopup(stop, "custom-popup");
+            if (
+              stop.EstimateTime === "進站中" ||
+              stop.EstimateTime === "即將進站"
+            ) {
+              activePopup(stop, "custom-popup-ongoing");
+            } else activePopup(stop, "custom-popup");
           }
         });
       } else {
         backBusData.value.Stops.filter((stop) => {
           if (stop.StopUID === payload.id) {
-            activePopup(stop, "custom-popup");
+            if (
+              stop.EstimateTime === "進站中" ||
+              stop.EstimateTime === "即將進站"
+            ) {
+              activePopup(stop, "custom-popup-ongoing");
+            } else activePopup(stop, "custom-popup");
           }
         });
       }
@@ -262,16 +283,25 @@ export default {
   background: #355f8b;
   border: 2px solid #ffffff;
 }
+.custom-popup-ongoing .leaflet-popup-content-wrapper,
+.stop-popup-ongoing .leaflet-popup-content-wrapper {
+  background: #d08181;
+  border: 2px solid #ffffff;
+}
 
 .custom-popup .leaflet-popup-content,
-.stop-popup .leaflet-popup-content {
+.custom-popup-ongoing .leaflet-popup-content,
+.stop-popup .leaflet-popup-content,
+.stop-popup-ongoing .leaflet-popup-content {
   display: flex;
   flex-direction: column;
   margin: 5px 10px;
   text-align: center;
 }
 .custom-popup .leaflet-popup-content span,
-.stop-popup .leaflet-popup-content span {
+.custom-popup-ongoing .leaflet-popup-content span,
+.stop-popup .leaflet-popup-content span,
+.stop-popup-ongoing .leaflet-popup-content span {
   color: #ffffff;
 }
 </style>
