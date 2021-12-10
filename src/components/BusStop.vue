@@ -92,6 +92,7 @@
         </div>
       </li>
     </ul>
+    <UpdataTimer />
   </div>
 </template>
 
@@ -99,10 +100,13 @@
 import { computed, ref } from "@vue/reactivity";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
-import getCityBus from "../composables/getCityBus";
 import { onMounted } from "@vue/runtime-core";
+import getCityBus from "../composables/getCityBus";
+import UpdataTimer from "../components/UpdateTimer.vue";
 
 export default {
+  components: { UpdataTimer },
+
   setup(props, { emit }) {
     const {
       loadBusStop,
@@ -185,12 +189,15 @@ export default {
 .busstop {
   width: 25vw;
   min-width: 300px;
-  height: 87%;
+  height: 85vh;
   background: #ffffff;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
   position: absolute;
-  top: 80px;
+  top: 85px;
   z-index: 999;
+}
+.businfo {
+  height: 12vh;
 }
 .search-bar {
   width: 20vw;
@@ -198,7 +205,7 @@ export default {
 }
 
 .bus-name {
-  height: 10vh;
+  height: 6vh;
   display: flex;
   width: 100%;
   justify-content: center;
@@ -211,7 +218,8 @@ export default {
 }
 .list-group {
   overflow-y: scroll;
-  max-height: 60vh;
+  height: 60vh;
+  max-height: 65vh;
   margin-right: 10px;
 }
 .list-group .list-group-item {

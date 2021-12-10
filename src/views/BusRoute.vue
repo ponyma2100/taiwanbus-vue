@@ -273,9 +273,10 @@ export default {
 }
 
 .busstop {
-  position: absolute;
+  position: fixed;
   top: 120px;
   left: 0px;
+  height: 85vh;
 }
 
 .custom-popup .leaflet-popup-content-wrapper,
