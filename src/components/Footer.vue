@@ -12,8 +12,10 @@ footer {
   align-items: center;
   background: #333333;
   width: 100%;
-  height: 60px;
+  height: 6vh;
   margin-top: 30px;
+  position: fixed;
+  bottom: 0;
   z-index: 999;
 }
 p {

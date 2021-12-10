@@ -32,7 +32,7 @@ export default {
 .background {
   display: flex;
   align-items: center;
-  height: 60vh;
+  height: 55vh;
   background-image: url("../assets/bg.png");
   background-size: cover;
 }

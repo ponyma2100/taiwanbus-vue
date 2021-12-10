@@ -52,9 +52,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 #map {
-  height: 85vh;
+  height: 86vh;
   z-index: 10;
 }
 .citybus {
@@ -66,5 +66,8 @@ export default {
   position: absolute;
   top: 120px;
   left: 0px;
+}
+header > p {
+  margin-bottom: 0;
 }
 </style>

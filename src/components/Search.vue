@@ -64,11 +64,14 @@ export default {
 <style scoped>
 .search {
   width: 25vw;
+  height: 85vh;
   min-width: 300px;
   height: 87%;
   background: #ffffff;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
   z-index: 999;
+  position: absolute;
+  top: 80px;
 }
 .search-bar {
   width: 18vw;

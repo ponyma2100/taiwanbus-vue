@@ -29,7 +29,7 @@ export default {
   white-space: nowrap;
 }
 .btn {
-  height: 174px;
+  height: 18vh;
   width: 217px;
   margin: 20px 20px;
 }

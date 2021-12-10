@@ -188,6 +188,8 @@ export default {
   height: 87%;
   background: #ffffff;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  top: 80px;
   z-index: 999;
 }
 .search-bar {
