@@ -35,11 +35,18 @@
         @click="handleShowStop(stop.StopUID, goBusData.Direction)"
       >
         <div class="stop-info" :class="{ active: stop.PlateNumb }">
-          <div class="stop-estimatetime">
+          <div
+            class="stop-estimatetime"
+            :class="{
+              ongoing:
+                stop.EstimateTime === '進站中' ||
+                stop.EstimateTime === '即將進站',
+            }"
+          >
             <p class="status" v-show="stop.StopStatus !== 0">
               {{ stop.StopStatus }}
             </p>
-            <p class="estimatetime" v-if="stop.StopStatus === 0">
+            <p class="estimatetime" v-show="stop.StopStatus === 0">
               {{ stop.EstimateTime }}
               <!-- {{ Math.floor(stop.EstimateTime / 60) }}分 -->
             </p>
@@ -61,7 +68,14 @@
         @click="handleShowStop(stop.StopUID, backBusData.Direction)"
       >
         <div class="stop-info" :class="{ active: stop.PlateNumb }">
-          <div class="stop-estimatetime">
+          <div
+            class="stop-estimatetime"
+            :class="{
+              ongoing:
+                stop.EstimateTime === '進站中' ||
+                stop.EstimateTime === '即將進站',
+            }"
+          >
             <p class="status" v-show="stop.StopStatus !== 0">
               {{ stop.StopStatus }}
             </p>
@@ -225,18 +239,6 @@ export default {
   background: #d08181;
   border: 2px solid #d08181;
 }
-/* .list-group-item-action::before {
-  content: "";
-  width: 12px;
-  height: 12px;
-  background: #c4c4c4;
-  border-radius: 50%;
-  border: 2px solid #f8f8f8;
-  position: absolute;
-  right: -7px;
-  top: 21px;
-  z-index: 999;
-} */
 
 .list-group .list-group-item:hover {
   cursor: pointer;
@@ -288,10 +290,16 @@ export default {
   justify-content: space-between;
 }
 .stop-estimatetime {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
   width: 77px;
   height: 26px;
   background: #355f8b;
   border-radius: 10px;
+}
+.stop-estimatetime.ongoing {
+  background: #d08181;
 }
 
 .stop-estimatetime > .estimatetime,
