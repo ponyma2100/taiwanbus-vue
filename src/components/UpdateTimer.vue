@@ -7,7 +7,7 @@
       <div class="timer-info">
         <span>{{ display }}秒後更新</span>
       </div>
-      <div class="timer-btn" @click="handleUpdate">
+      <div class="timer-btn" @click="handleUpdate()">
         <img src="../assets/refresh.png" alt="refresh" />
         <button>立即更新</button>
       </div>
@@ -19,10 +19,12 @@
 import { ref } from "@vue/reactivity";
 import { onMounted } from "@vue/runtime-core";
 export default {
-  setup() {
+  props: ["busStatus", "toggleShowBus"],
+  setup(props, { emit }) {
     const display = ref("");
     const width = ref(0);
     const perSec = ref(0);
+
     let countdownActive;
     let progressActive;
     onMounted(() => {
@@ -30,23 +32,30 @@ export default {
       setProgress();
     });
 
+    console.log(props.toggleShowBus, props.busStatus);
+
     const handleUpdate = () => {
-      console.log("update");
+      emit("update", props.busStatus);
       clearInterval(countdownActive);
       startTimer();
+      clearInterval(progressActive);
+      setProgress();
     };
 
     const startTimer = () => {
       const second = 1000;
       const now = Date.now();
       const countdownValue = now + 30 * second;
+      display.value = 30;
 
       countdownActive = setInterval(() => {
         const remaining = Math.round((countdownValue - Date.now()) / 1000);
         if (remaining < 0) {
           clearInterval(countdownActive);
           startTimer();
+          clearInterval(progressActive);
           setProgress();
+          emit("update", props.busStatus);
         } else {
           display.value = remaining;
         }
@@ -54,6 +63,7 @@ export default {
     };
 
     const setProgress = () => {
+      width.value = 0;
       perSec.value = 100 / 30;
 
       progressActive = setInterval(() => {

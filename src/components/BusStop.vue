@@ -92,7 +92,12 @@
         </div>
       </li>
     </ul>
-    <UpdataTimer />
+
+    <UpdataTimer
+      @update="handleUpdate"
+      :busStatus="busStatus"
+      :toggleShowBus="toggleShowBus"
+    />
   </div>
 </template>
 
@@ -121,29 +126,6 @@ export default {
     const toggleShowBus = ref(true);
     const busStatus = ref("go");
 
-    const handleShowGo = () => {
-      toggleShowBus.value = true;
-      busStatus.value = "go";
-      console.log(
-        "🚀 ~ file: BusStop.vue ~ line 105 ~ handleShowGo ~ status.value",
-        busStatus.value
-      );
-      emit("showGo");
-    };
-    const handleShowBack = () => {
-      toggleShowBus.value = false;
-      busStatus.value = "back";
-      console.log(
-        "🚀 ~ file: BusStop.vue ~ line 111 ~ handleShowBack ~ status.value",
-        busStatus.value
-      );
-      emit("showBack");
-    };
-
-    const handleShowStop = (id, busStatus) => {
-      emit("showStop", { id, busStatus });
-    };
-
     onMounted(async () => {
       await loadBusStop(
         route.params.city,
@@ -167,8 +149,55 @@ export default {
       );
     });
 
+    const handleShowGo = () => {
+      toggleShowBus.value = true;
+      busStatus.value = "go";
+      console.log(
+        "🚀 ~ file: BusStop.vue ~ line 105 ~ handleShowGo ~ status.value",
+        busStatus.value
+      );
+      emit("showGo");
+    };
+    const handleShowBack = () => {
+      toggleShowBus.value = false;
+      busStatus.value = "back";
+      console.log(
+        "🚀 ~ file: BusStop.vue ~ line 111 ~ handleShowBack ~ status.value",
+        busStatus.value
+      );
+      emit("showBack");
+    };
+
+    const handleShowStop = (id, busStatus) => {
+      emit("showStop", { id, busStatus });
+    };
+
     const handleClick = () => {
       router.push({ name: "CityBus", params: { city: route.params.city } });
+    };
+
+    const handleUpdate = async (busStatus) => {
+      emit("update", busStatus);
+      await loadBusStop(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusTime(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadPlateNumb(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusPosition(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
     };
 
     return {
@@ -180,6 +209,11 @@ export default {
       backBusData,
       busStatus,
       handleShowStop,
+      handleUpdate,
+      // handleUpdate,
+      // display,
+      // setProgress,
+      // width,
     };
   },
 };
@@ -329,4 +363,29 @@ export default {
   font-size: 14px;
   color: #d08181;
 }
+
+/* Timer */
+/* .timer {
+  height: 60px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.showtimer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.progress-container {
+  background-color: rgba(0, 0, 0, 0.1);
+  height: 0.4rem;
+  max-width: 600px;
+  width: 98%;
+}
+
+.progress {
+  height: 0.4rem;
+  background-color: #355f8b;
+  transition: width 0.1s ease;
+} */
 </style>

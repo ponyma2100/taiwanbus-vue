@@ -8,6 +8,7 @@
     @showGo="showGoBus"
     @showBack="showBackBus"
     @showStop="showStopInfo"
+    @update="updateMap"
   />
 </template>
 
@@ -141,7 +142,6 @@ export default {
     const setStopMarker = (data) => {
       data.value.Stops.forEach((stop) => {
         const busTime = stop.EstimateTime;
-        // const busTime = ` ${Math.floor(stop.EstimateTime / 60)}分`;
         let popupContent = "";
         let popupOptions = {};
 
@@ -254,6 +254,37 @@ export default {
         .openOn(mymap);
     };
 
+    const updateMap = async (busStatus) => {
+      console.log("updateMap", busStatus);
+      await loadBusStop(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusTime(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadPlateNumb(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      await loadBusPosition(
+        route.params.city,
+        route.params.routeName,
+        route.params.routeUID
+      );
+      clearMarkers();
+      if (busStatus === "go") {
+        setStopMarker(goBusData);
+        setBusMarker(goBusData);
+      } else {
+        setStopMarker(backBusData);
+        setBusMarker(backBusData);
+      }
+    };
     return {
       busStopData,
       goBusData,
@@ -261,6 +292,7 @@ export default {
       showGoBus,
       showBackBus,
       showStopInfo,
+      updateMap,
     };
   },
 };
