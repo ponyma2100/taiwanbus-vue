@@ -7,18 +7,17 @@ function getAuthorizationHeader() {
   let GMTString = new Date().toGMTString();
   let ShaObj = new jsSHA('SHA-1', 'TEXT');
   ShaObj.setHMACKey(AppKey, 'TEXT');
-  ShaObj.update('x-date: ' + GMTString);
+  ShaObj.update(`x-date: ${GMTString}`)
   let HMAC = ShaObj.getHMAC('B64');
   let Authorization = 'hmac username=\"' + AppID + '\", algorithm=\"hmac-sha1\", headers=\"x-date\", signature=\"' + HMAC + '\"';
 
-  return { 'Authorization': Authorization, 'X-Date': GMTString /*,'Accept-Encoding': 'gzip'*/ };
+  return { 'Authorization': Authorization, 'X-Date': GMTString };
 }
 
 
 // https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/Taipei?$top=10&$format=JSON
 
 const getCityBus = () => {
-  const headers = getAuthorizationHeader()
   const busData = ref([])
   const busStopData = ref([])
   const goBusData = ref([])
@@ -32,7 +31,7 @@ const getCityBus = () => {
 
   const loadBus = async (city = 'Taipei') => {
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$select=RouteName,DepartureStopNameZh,destinationStopNameZh,RouteUID&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Route/City/${city}?$select=RouteName,DepartureStopNameZh,destinationStopNameZh,RouteUID&$format=JSON`, { headers: getAuthorizationHeader() })
       const data = await res.json()
       busData.value = data
 
@@ -45,7 +44,7 @@ const getCityBus = () => {
   // https://ptx.transportdata.tw/MOTC/v2/Bus/DisplayStopOfRoute/City/Taipei/311?$filter=contains(RouteUID%2C%27TPE15563%27)&$format=JSON
   const loadBusStop = async (city, routeName, routeUID) => {
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/DisplayStopOfRoute/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/DisplayStopOfRoute/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers: getAuthorizationHeader() })
       const data = await res.json()
       busStopData.value = data
 
@@ -71,7 +70,7 @@ const getCityBus = () => {
   const loadBusTime = async (city, routeName, routeUID) => {
 
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers: getAuthorizationHeader() })
 
       const data = await res.json()
       estimateTime.value = data
@@ -83,70 +82,69 @@ const getCityBus = () => {
           estimateBackBus.value.push(bus)
         }
       })
+      if (estimateTime.value) {
+        goBusData.value.Stops.reduce((needElements, item) => {
+          estimateGoBus.value.filter(bus => {
+            if (item.StopUID === bus.StopUID) {
 
-      // goBusData.value.Stops.map(stop => {
-      //         if(stop.EstimateTime !== null && stop.EstimateTime <= 60) {
-      //           return ''
-      //         }
-      goBusData.value.Stops.reduce((needElements, item) => {
-        estimateGoBus.value.filter(bus => {
-          if (item.StopUID === bus.StopUID) {
+              // EstimateTime
+              if (bus.EstimateTime <= 30) {
+                item['EstimateTime'] = '進站中'
+              } else if (bus.EstimateTime <= 60) {
+                item['EstimateTime'] = '即將進站'
+              } else {
+                item['EstimateTime'] = Math.floor(bus.EstimateTime / 60) + '分'
+              }
 
-            // EstimateTime
-            if (bus.EstimateTime <= 30) {
-              item['EstimateTime'] = '進站中'
-            } else if (bus.EstimateTime <= 60) {
-              item['EstimateTime'] = '即將進站'
-            } else {
-              item['EstimateTime'] = Math.floor(bus.EstimateTime / 60) + '分'
+              // Bus Status [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
+              if (bus.StopStatus === 1) {
+                item['StopStatus'] = '尚未發車'
+              } else if (bus.StopStatus === 2) {
+                item['StopStatus'] = '交管不停靠'
+              } else if (bus.StopStatus === 3) {
+                item['StopStatus'] = '末班車已過'
+              } else if (bus.StopStatus === 4) {
+                item['StopStatus'] = '今日未營運'
+              } else {
+                item['StopStatus'] = bus.StopStatus
+              }
             }
+          })
+          return goBusData.value
+        }, [])
 
-            // Bus Status [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
-            if (bus.StopStatus === 1) {
-              item['StopStatus'] = '尚未發車'
-            } else if (bus.StopStatus === 2) {
-              item['StopStatus'] = '交管不停靠'
-            } else if (bus.StopStatus === 3) {
-              item['StopStatus'] = '末班車已過'
-            } else if (bus.StopStatus === 4) {
-              item['StopStatus'] = '今日未營運'
-            } else {
-              item['StopStatus'] = bus.StopStatus
+        backBusData.value.Stops.reduce((needElements, item) => {
+          estimateBackBus.value.filter(bus => {
+            if (item.StopUID === bus.StopUID) {
+              if (bus.EstimateTime <= 30) {
+                item['EstimateTime'] = '進站中'
+              } else if (bus.EstimateTime <= 60) {
+                item['EstimateTime'] = '即將進站'
+              } else {
+                item['EstimateTime'] = Math.floor(bus.EstimateTime / 60) + '分'
+              }
+
+              // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
+              if (bus.StopStatus === 1) {
+                item['StopStatus'] = '尚未發車'
+              } else if (bus.StopStatus === 2) {
+                item['StopStatus'] = '交管不停靠'
+              } else if (bus.StopStatus === 3) {
+                item['StopStatus'] = '末班車已過'
+              } else if (bus.StopStatus === 4) {
+                item['StopStatus'] = '今日未營運'
+              } else {
+                item['StopStatus'] = bus.StopStatus
+              }
             }
-          }
-        })
-        return goBusData.value
-      }, [])
+          })
 
-      backBusData.value.Stops.reduce((needElements, item) => {
-        estimateBackBus.value.filter(bus => {
-          if (item.StopUID === bus.StopUID) {
-            if (bus.EstimateTime <= 30) {
-              item['EstimateTime'] = '進站中'
-            } else if (bus.EstimateTime <= 60) {
-              item['EstimateTime'] = '即將進站'
-            } else {
-              item['EstimateTime'] = Math.floor(bus.EstimateTime / 60) + '分'
-            }
+          return backBusData.value
+        }, [])
 
-            // [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運'] 
-            if (bus.StopStatus === 1) {
-              item['StopStatus'] = '尚未發車'
-            } else if (bus.StopStatus === 2) {
-              item['StopStatus'] = '交管不停靠'
-            } else if (bus.StopStatus === 3) {
-              item['StopStatus'] = '末班車已過'
-            } else if (bus.StopStatus === 4) {
-              item['StopStatus'] = '今日未營運'
-            } else {
-              item['StopStatus'] = bus.StopStatus
-            }
-          }
-        })
 
-        return backBusData.value
-        // if (estimateGoBus.value.item.StopUID)
-      }, [])
+      }
+
 
       return { goBusData, backBusData }
 
@@ -158,35 +156,38 @@ const getCityBus = () => {
 
   const loadPlateNumb = async (city, routeName, routeUID) => {
 
-    const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+    const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers: getAuthorizationHeader() })
     const data = await res.json()
     plateNumb.value = data
 
-    goBusData.value.Stops.reduce((needElements, item) => {
-      plateNumb.value.filter(bus => {
+    if (plateNumb.value) {
+      goBusData.value.Stops.reduce((needElements, item) => {
+        plateNumb.value.filter(bus => {
 
-        if (item.StopUID === bus.StopUID) {
-          item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
-        }
+          if (item.StopUID === bus.StopUID) {
+            item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
+          }
+        })
+        return goBusData.value
       })
-      return goBusData.value
-    })
 
-    backBusData.value.Stops.reduce((needElements, item) => {
-      plateNumb.value.filter(bus => {
+      backBusData.value.Stops.reduce((needElements, item) => {
+        plateNumb.value.filter(bus => {
 
-        if (item.StopUID === bus.StopUID) {
-          item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
-        }
+          if (item.StopUID === bus.StopUID) {
+            item['PlateNumb'] = bus.PlateNumb ? bus.PlateNumb : ''
+          }
+        })
+        return backBusData.value
       })
-      return backBusData.value
-    })
+
+    }
   }
 
   // https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/Taipei/505?$format=JSON
   const loadBusPosition = async (city, routeName, routeUID) => {
 
-    const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+    const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers: getAuthorizationHeader() })
     const data = await res.json()
     busPosition.value = data
 
@@ -214,7 +215,7 @@ const getCityBus = () => {
 
   const loadBusShape = async (city, routeName, routeUID) => {
     try {
-      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Shape/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers })
+      const res = await fetch(`https://ptx.transportdata.tw/MOTC/v2/Bus/Shape/City/${city}/${routeName}?$filter=contains(RouteUID%2C%27${routeUID}%27)&$format=JSON`, { headers: getAuthorizationHeader() })
       const data = await res.json()
       busShape.value = data
 

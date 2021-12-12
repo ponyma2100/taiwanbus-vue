@@ -15,7 +15,7 @@
 <script>
 import L from "leaflet";
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "@vue/runtime-core";
+import { onMounted } from "@vue/runtime-core";
 import getCityBus from "../composables/getCityBus";
 import BusStop from "../components/BusStop.vue";
 import stopIconUrl from "../assets/stopicon.png";
@@ -125,14 +125,12 @@ export default {
     });
 
     const showGoBus = () => {
-      console.log("showGo");
       clearMarkers();
       setStopMarker(goBusData);
       setBusMarker(goBusData);
     };
 
     const showBackBus = () => {
-      console.log("showBack");
       clearMarkers();
       setStopMarker(backBusData);
       setBusMarker(backBusData);
@@ -255,7 +253,6 @@ export default {
     };
 
     const updateMap = async (busStatus) => {
-      console.log("updateMap", busStatus);
       await loadBusStop(
         route.params.city,
         route.params.routeName,

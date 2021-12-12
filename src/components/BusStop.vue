@@ -152,19 +152,11 @@ export default {
     const handleShowGo = () => {
       toggleShowBus.value = true;
       busStatus.value = "go";
-      console.log(
-        "🚀 ~ file: BusStop.vue ~ line 105 ~ handleShowGo ~ status.value",
-        busStatus.value
-      );
       emit("showGo");
     };
     const handleShowBack = () => {
       toggleShowBus.value = false;
       busStatus.value = "back";
-      console.log(
-        "🚀 ~ file: BusStop.vue ~ line 111 ~ handleShowBack ~ status.value",
-        busStatus.value
-      );
       emit("showBack");
     };
 

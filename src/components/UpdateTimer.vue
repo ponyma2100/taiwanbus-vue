@@ -17,7 +17,13 @@
 
 <script>
 import { ref } from "@vue/reactivity";
-import { onMounted } from "@vue/runtime-core";
+import {
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  watch,
+  watchEffect,
+} from "@vue/runtime-core";
 export default {
   props: ["busStatus", "toggleShowBus"],
   setup(props, { emit }) {
@@ -31,8 +37,6 @@ export default {
       startTimer();
       setProgress();
     });
-
-    console.log(props.toggleShowBus, props.busStatus);
 
     const handleUpdate = () => {
       emit("update", props.busStatus);
@@ -75,6 +79,11 @@ export default {
         }
       }, 1000);
     };
+    onUnmounted(() => {
+      console.log("unmounted");
+      clearInterval(countdownActive);
+      clearInterval(progressActive);
+    });
 
     return { handleUpdate, display, setProgress, width };
   },
