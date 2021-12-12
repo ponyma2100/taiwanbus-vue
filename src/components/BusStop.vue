@@ -202,10 +202,6 @@ export default {
       busStatus,
       handleShowStop,
       handleUpdate,
-      // handleUpdate,
-      // display,
-      // setProgress,
-      // width,
     };
   },
 };

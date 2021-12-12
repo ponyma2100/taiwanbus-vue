@@ -71,7 +71,7 @@ export default {
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
   z-index: 999;
   position: absolute;
-  top: 80px;
+  top: 60px;
 }
 .search-bar {
   width: 18vw;

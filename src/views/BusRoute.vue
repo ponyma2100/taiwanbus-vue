@@ -141,9 +141,9 @@ export default {
         let popupOptions = {};
 
         if (stop.StopStatus === 0) {
-          popupContent = `<span>${stop.StopName.Zh_tw}</span><span>${busTime}</span>`;
+          popupContent = `<span>${stop.StopSequence}-${stop.StopName.Zh_tw}</span><span>${busTime}</span>`;
         } else {
-          popupContent = `<span>${stop.StopName.Zh_tw}</span><span>${stop.StopStatus}</span>`;
+          popupContent = `<span>${stop.StopSequence}-${stop.StopName.Zh_tw}</span><span>${stop.StopStatus}</span>`;
         }
 
         if (
@@ -227,9 +227,9 @@ export default {
       let popupContent = "";
 
       if (data.StopStatus === 0) {
-        popupContent = `<span>${data.StopName.Zh_tw}</span><span>${busTime}</span>`;
+        popupContent = `<span>${data.StopSequence}-${data.StopName.Zh_tw}</span><span>${busTime}</span>`;
       } else {
-        popupContent = `<span>${data.StopName.Zh_tw}</span><span>${data.StopStatus}</span>`;
+        popupContent = `<span>${data.StopSequence}-${data.StopName.Zh_tw}</span><span>${data.StopStatus}</span>`;
       }
 
       mymap.setView(
