@@ -1,7 +1,4 @@
 <template>
-  <header>
-    <p>首頁/</p>
-  </header>
   <div id="map"></div>
   <BusStop
     :busStopData="busStopData"

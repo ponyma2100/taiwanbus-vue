@@ -96,6 +96,11 @@ export default {
   position: absolute;
   bottom: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background: white;
+  padding: 10px;
 }
 .showtimer {
   display: flex;

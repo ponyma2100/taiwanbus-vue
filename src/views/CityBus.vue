@@ -1,8 +1,5 @@
 <template>
   <div class="citybus">
-    <header>
-      <p>首頁/</p>
-    </header>
     <div id="map"></div>
     <Search
       v-show="!toggleSearchResult"

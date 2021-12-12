@@ -215,11 +215,11 @@ export default {
 .busstop {
   width: 25vw;
   min-width: 300px;
-  height: 85vh;
+  height: 87vh;
   background: #ffffff;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.15);
   position: absolute;
-  top: 85px;
+  top: 60px;
   z-index: 999;
 }
 .businfo {
@@ -244,7 +244,7 @@ export default {
 }
 .list-group {
   overflow-y: scroll;
-  height: 60vh;
+  height: 65vh;
   max-height: 65vh;
   margin-right: 10px;
 }
