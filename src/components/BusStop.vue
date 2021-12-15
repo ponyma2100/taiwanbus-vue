@@ -231,8 +231,10 @@ export default {
       let favRoute = [];
       goBusData.value["isFav"] = true;
       favRoute = {
+        RouteName: goBusData.value.RouteName.Zh_tw,
         RouteUID: goBusData.value.RouteUID,
         isFav: goBusData.value["isFav"],
+        city: route.params.city,
       };
 
       favRoutes.push(favRoute);

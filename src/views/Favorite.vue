@@ -1,5 +1,4 @@
 <template>
-  <h1>My Favorite</h1>
   <FavoriteList />
 </template>
 
@@ -10,5 +9,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.favorite {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 50px;
+}
 </style>
