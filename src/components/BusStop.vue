@@ -6,17 +6,20 @@
     <div class="businfo" v-if="backBusData.Stops">
       <div class="bus-name">
         <p>{{ $route.params.routeName }}</p>
-      </div>
-      <div class="addfav" @click="addFav($route.params.routeUID)">
-        <div v-show="!goBusData.isFav">
-          <img src="../assets/favorite.png" alt="" />
+        <div class="bus-fav">
+          <div class="addfav" @click="addFav($route.params.routeUID)">
+            <div v-show="!goBusData.isFav">
+              <img src="../assets/favorite.png" alt="" />
+            </div>
+          </div>
+          <div class="removefav" @click="removeFav($route.params.routeUID)">
+            <div v-show="goBusData.isFav">
+              <img src="../assets/favoritesaved.png" alt="" />
+            </div>
+          </div>
         </div>
       </div>
-      <div class="removefav" @click="removeFav($route.params.routeUID)">
-        <div v-show="goBusData.isFav">
-          <img src="../assets/favoritesaved.png" alt="" />
-        </div>
-      </div>
+
       <ul class="nav nav-pills">
         <li
           class="nav-item"
@@ -297,6 +300,12 @@ export default {
   font-weight: bold;
   font-size: 35px;
   line-height: 41px;
+  margin-bottom: 0;
+}
+.bus-fav {
+  width: 10%;
+  padding: 0 10px;
+  margin: 0 10px;
 }
 .list-group {
   overflow-y: scroll;
@@ -411,29 +420,4 @@ export default {
   font-size: 14px;
   color: #d08181;
 }
-
-/* Timer */
-/* .timer {
-  height: 60px;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-.showtimer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.progress-container {
-  background-color: rgba(0, 0, 0, 0.1);
-  height: 0.4rem;
-  max-width: 600px;
-  width: 98%;
-}
-
-.progress {
-  height: 0.4rem;
-  background-color: #355f8b;
-  transition: width 0.1s ease;
-} */
 </style>
