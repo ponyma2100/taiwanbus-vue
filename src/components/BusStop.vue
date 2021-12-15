@@ -175,7 +175,7 @@ export default {
       if (!matchFavBus.length) {
         goBusData.value = goBusData.value;
       } else {
-        goBusData.value = matchFavBus[0];
+        goBusData.value["isFav"] = matchFavBus[0].isFav;
       }
     };
 
@@ -228,23 +228,23 @@ export default {
 
     const addFav = (id) => {
       let favRoutes = JSON.parse(localStorage.getItem("favBusRoute")) || [];
-      goBusData.value = {
-        ...goBusData.value,
-        isFav: true,
+      let favRoute = [];
+      goBusData.value["isFav"] = true;
+      favRoute = {
+        RouteUID: goBusData.value.RouteUID,
+        isFav: goBusData.value["isFav"],
       };
-      favRoutes.push(goBusData.value);
+
+      favRoutes.push(favRoute);
       localStorage.setItem("favBusRoute", JSON.stringify(favRoutes));
     };
 
     const removeFav = (id) => {
-      goBusData.value = {
-        ...goBusData.value,
-        isFav: false,
-      };
-
+      goBusData.value["isFav"] = false;
       let favBusList = JSON.parse(localStorage.getItem("favBusRoute"));
 
       const removeIndex = favBusList.findIndex((bus) => bus.RouteUID === id);
+
       if (removeIndex === -1) return;
       favBusList.splice(removeIndex, 1);
 
@@ -264,7 +264,6 @@ export default {
       handleUpdate,
       addFav,
       removeFav,
-      // showFavBus,
     };
   },
 };
