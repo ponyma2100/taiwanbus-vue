@@ -48,12 +48,13 @@ const getCityBus = () => {
       const data = await res.json()
       busStopData.value = data
 
-
       busStopData.value.map(bus => {
         if (bus.Direction === 0) {
           goBusData.value = bus
+          goBusData.value['isFav'] = false
         } else {
           backBusData.value = bus
+          backBusData.value['isFav'] = false
         }
       })
 

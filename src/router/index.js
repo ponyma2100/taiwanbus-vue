@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import CityBus from '../views/CityBus.vue'
 import BusRoute from '../views/BusRoute.vue'
+import Favorite from '../views/Favorite.vue'
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     name: 'BusRoute',
     component: BusRoute,
     props: true
+  },
+  {
+    path: '/favorite',
+    name: 'Favorite',
+    component: Favorite,
   },
 ]
 

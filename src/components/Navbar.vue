@@ -8,7 +8,7 @@
       </div>
       <div class="links">
         <router-link :to="{ name: 'Home' }">站點查詢</router-link>
-        <router-link :to="{ name: 'Home' }">路線規劃</router-link>
+        <router-link :to="{ name: 'Favorite' }">我的收藏</router-link>
       </div>
     </nav>
   </div>

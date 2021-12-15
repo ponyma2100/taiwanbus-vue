@@ -7,6 +7,16 @@
       <div class="bus-name">
         <p>{{ $route.params.routeName }}</p>
       </div>
+      <div class="addfav" @click="addFav($route.params.routeUID)">
+        <div v-show="!goBusData.isFav">
+          <img src="../assets/favorite.png" alt="" />
+        </div>
+      </div>
+      <div class="removefav" @click="removeFav($route.params.routeUID)">
+        <div v-show="goBusData.isFav">
+          <img src="../assets/favoritesaved.png" alt="" />
+        </div>
+      </div>
       <ul class="nav nav-pills">
         <li
           class="nav-item"
@@ -48,7 +58,6 @@
             </p>
             <p class="estimatetime" v-show="stop.StopStatus === 0">
               {{ stop.EstimateTime }}
-              <!-- {{ Math.floor(stop.EstimateTime / 60) }}分 -->
             </p>
           </div>
           <div class="stop-name">
@@ -147,7 +156,25 @@ export default {
         route.params.routeName,
         route.params.routeUID
       );
+      compareFavBus();
     });
+
+    // compare localstorage
+    const compareFavBus = () => {
+      let favBuslist = JSON.parse(localStorage.getItem("favBusRoute")) || [];
+      if (!favBuslist) {
+        return;
+      }
+      const matchFavBus = favBuslist.filter((bus) => {
+        return bus.RouteUID === route.params.routeUID;
+      });
+
+      if (!matchFavBus.length) {
+        goBusData.value = goBusData.value;
+      } else {
+        goBusData.value = matchFavBus[0];
+      }
+    };
 
     const handleShowGo = () => {
       toggleShowBus.value = true;
@@ -190,6 +217,36 @@ export default {
         route.params.routeName,
         route.params.routeUID
       );
+
+      compareFavBus();
+    };
+
+    // initial localstorage
+
+    const addFav = (id) => {
+      let favRoutes = JSON.parse(localStorage.getItem("favBusRoute")) || [];
+      goBusData.value = {
+        ...goBusData.value,
+        isFav: true,
+      };
+      favRoutes.push(goBusData.value);
+      localStorage.setItem("favBusRoute", JSON.stringify(favRoutes));
+    };
+
+    const removeFav = (id) => {
+      goBusData.value = {
+        ...goBusData.value,
+        isFav: false,
+      };
+
+      let favBusList = JSON.parse(localStorage.getItem("favBusRoute"));
+
+      const removeIndex = favBusList.findIndex((bus) => bus.RouteUID === id);
+      if (removeIndex === -1) return;
+      favBusList.splice(removeIndex, 1);
+
+      localStorage.removeItem("favBusRoute");
+      localStorage.setItem("favBusRoute", JSON.stringify(favBusList));
     };
 
     return {
@@ -202,6 +259,9 @@ export default {
       busStatus,
       handleShowStop,
       handleUpdate,
+      addFav,
+      removeFav,
+      // showFavBus,
     };
   },
 };
