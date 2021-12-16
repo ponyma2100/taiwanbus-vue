@@ -307,6 +307,7 @@ export default {
   width: 10%;
   padding: 0 10px;
   margin: 0 10px;
+  cursor: pointer;
 }
 .list-group {
   overflow-y: scroll;
