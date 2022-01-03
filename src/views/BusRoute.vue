@@ -91,7 +91,7 @@ export default {
           tileSize: 512,
           zoomOffset: -1,
           accessToken:
-            "pk.eyJ1IjoicG9ueWF3ZXNvbWUiLCJhIjoiY2tscWd3djhwMHVwODJvcHM2dTJxcXByciJ9.EMsPVi7a-UV29InwyJ5m4g",
+            process.env.VUE_APP_MAPBOXTOKEN,
         }
       ).addTo(mymap);
 

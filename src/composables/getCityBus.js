@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 
 function getAuthorizationHeader() {
-  const AppID = '9cf5f22a363c4058b1262cbf3be0eef9';
-  const AppKey = 'jojLjf4QvzK_2rNOLGNDh2qEJk0';
+  const AppID = process.env.VUE_APP_APPID;
+  const AppKey = process.env.VUE_APP_APPKEY;
 
   let GMTString = new Date().toGMTString();
   let ShaObj = new jsSHA('SHA-1', 'TEXT');
